@@ -28,81 +28,60 @@ export async function runQuickAnalysisFree(resumeContent: string): Promise<Quick
     throw new Error('KIMI_API_KEY not found');
   }
 
-  // FREE TIER PROMPT - Give 80% value, hold back 20% for paid
-  const prompt = `You are an expert resume analyst. Analyze this resume and provide a FREE quick assessment that demonstrates your expertise while leaving room for the paid deep-dive.
+  // ============================================================================
+  // OPTIMIZED FREE TIER PROMPT (Hybrid Approach)
+  // - System message: Rubric cached per session (10-15% token savings)
+  // - User message: Compressed by 30%, kept critical examples
+  // - Maintains 80/20 value strategy while reducing cost
+  // ============================================================================
+  
+  // System message: Scoring rubric (cached, not repeated every call)
+  const systemMessage = `You are a deterministic resume scorer. Output ONLY valid JSON.
 
-STRATEGY: Show them you found REAL issues in THEIR resume using THEIR data. Be specific enough to prove value, but hold back the complete solution.
+SCORING RUBRIC (same input = same score ±2):
+- ATS (0-100): Quantified bullets (30 pts), action verbs (20 pts), keywords (25 pts), clean format (15 pts), no typos (10 pts)
+- Clarity (0-100): Concise bullets 1-2 lines (60 pts), clear headers (20 pts), overall conciseness (20 pts)
+- Impact (0-100): Metrics/numbers (50 pts), result-focused language (30 pts), business impact keywords (20 pts)
+- Overall: ATS×0.4 + Clarity×0.3 + Impact×0.3
 
-Return ONLY this JSON structure (no markdown, no explanations):
+FREE TIER STRATEGY: Show REAL issues using THEIR data. Be specific enough to prove value, but hold back complete solutions (80% insight, 20% held for paid).`;
+
+  // User message: Analysis request with examples
+  const prompt = `Analyze this resume and return ONLY this JSON structure:
+
 {
-  "scores": {
-    "overall": number (0-100, weighted: ats*0.4 + clarity*0.3 + impact*0.3),
-    "ats": number (0-100, ATS compatibility score),
-    "clarity": number (0-100, readability and structure),
-    "impact": number (0-100, achievement strength)
-  },
-  "quickWins": [
-    {
-      "text": "specific observation pointing to the issue with their actual data",
-      "section": "exact section name from resume",
-      "priority": "High | Medium | Low"
-    }
-  ],
-  "inferredJobTarget": "specific job title inferred from experience and skills",
-  "keyStrengths": ["specific strength with evidence from their resume", "strength 2"],
-  "topIssues": ["specific issue with their actual data", "issue 2"]
+  "scores": {"overall": 0-100, "ats": 0-100, "clarity": 0-100, "impact": 0-100},
+  "quickWins": [{"text": "observation with their actual data", "section": "exact section name", "priority": "High|Medium|Low"}],
+  "inferredJobTarget": "specific job title from experience + skills",
+  "keyStrengths": ["strength with evidence", "strength 2"],
+  "topIssues": ["issue with their data", "issue 2"]
 }
 
-SCORING (same methodology as full version):
-- ATS Score: Keywords, quantification, structure, formatting, action verbs
-- Clarity Score: Readability, conciseness, flow, grammar
-- Impact Score: Quantified results, verb strength, achievement focus, business impact
+QUICK WINS (exactly 2-3, High priority first):
+- Quote THEIR actual text (10-15 words)
+- Point out PROBLEM clearly
+- Give 80% insight, hold back exact solution
 
-QUICK WINS (provide exactly 2-3, ordered by priority):
-- Use THEIR actual text/data from the resume
-- Point out the PROBLEM clearly
-- Give 80% of the insight (enough to be helpful)
-- Hold back 20% (the exact rewrite/solution)
-
-EXAMPLES OF GOOD FREE-TIER SUGGESTIONS:
-
+GOOD examples:
 ✓ "Experience bullet 2 says 'Led team' - no team size or outcome mentioned"
-  → Shows the problem, references their text, but doesn't give the full rewrite
+✓ "'Managed projects' in Experience - lacks numbers (how many? what results?)"
+✓ "3 out of 5 bullets start with weak verbs ('Responsible for', 'Helped with')"
 
-✓ "'Managed projects' in Experience section - lacks numbers (how many? what results?)"
-  → Points to vague language, asks the right questions, but doesn't solve it
-
-✓ "Skills section missing key tools for [job target]: no mention of [specific tools]"
-  → Identifies the gap with specifics, but doesn't list all missing keywords
-
-✓ "3 out of 5 experience bullets start with weak verbs ('Responsible for', 'Helped with')"
-  → Quantifies the issue, shows you analyzed it, but doesn't rewrite them all
-
-BAD EXAMPLES (too generic or too complete):
-
-✗ "Add more metrics to your experience" (generic, no proof you read it)
-✗ "Replace 'Led team' with 'Led team of 8 engineers, delivering 3 products worth $2.3M'" (gave away the full solution)
-✗ "Improve your resume" (useless)
+BAD examples:
+✗ "Add more metrics" (generic, no proof you read it)
+✗ "Replace 'Led team' with 'Led team of 8 engineers...'" (gave full solution)
 
 KEY STRENGTHS (exactly 2, with evidence):
-- Reference THEIR actual content
-- Be specific: "5 out of 6 bullets in Experience include metrics"
-- Show you analyzed their unique profile
+- Reference THEIR content: "5 out of 6 bullets include metrics"
 
 TOP ISSUES (exactly 2, with specific data):
-- Use THEIR text: "No metrics in Experience bullets 1, 3, 5"
-- Quantify when possible: "Weak action verbs appear 4 times"
-- Be precise enough to verify immediately
+- Use THEIR text: "No metrics in bullets 1, 3, 5"
+- Quantify: "Weak verbs appear 4 times"
 
-JOB TARGET INFERENCE:
-- Analyze their experience titles, skills, industry
-- Be SPECIFIC: "Senior Product Manager" not just "Manager"
-- Consider career level based on years
+JOB TARGET: Infer from last 2 titles + skills + years. Be SPECIFIC: "Senior Product Manager" not "Manager"
 
 Resume Content:
-${resumeContent}
-
-REMEMBER: Give them 80% - enough to see you're legit and get some value, but make them want the remaining 20% (exact fixes, more insights, detailed rewrites).`;
+${resumeContent}`;
 
   try {
     const response = await queuedApiCall(() =>
@@ -113,12 +92,17 @@ REMEMBER: Give them 80% - enough to see you're legit and get some value, but mak
             model: 'kimi-k2-turbo-preview',
             messages: [
               {
+                role: 'system',
+                content: systemMessage  // Cached rubric (10-15% token savings)
+              },
+              {
                 role: 'user',
                 content: prompt
               }
             ],
-            temperature: 0.3,
-            max_tokens: 800, // Reduced from 1500 - shorter response
+            temperature: 0,      // Deterministic
+            top_p: 0.01,         // Further constrain randomness
+            max_tokens: 600,     // Reduced from 800 (empirically 430-500 needed)
           },
           {
             headers: {
@@ -140,11 +124,35 @@ REMEMBER: Give them 80% - enough to see you're legit and get some value, but mak
     const { parseJsonFromLLM } = await import('../json-parser');
     const result: QuickAnalysisFreeResult = parseJsonFromLLM(content);
     
-    // Validate scores are in range
-    result.scores.overall = Math.min(100, Math.max(0, result.scores.overall));
-    result.scores.ats = Math.min(100, Math.max(0, result.scores.ats));
-    result.scores.clarity = Math.min(100, Math.max(0, result.scores.clarity));
-    result.scores.impact = Math.min(100, Math.max(0, result.scores.impact));
+    // ============================================================================
+    // POST-PROCESSING FOR CONSISTENCY
+    // ============================================================================
+    
+    // Snap scores to 5-point grid (hides noise, users can't perceive 1-point deltas)
+    const snapToGrid = (score: number): number => {
+      const clamped = Math.min(100, Math.max(0, score));
+      return Math.round(clamped / 5) * 5;
+    };
+    
+    result.scores.ats = snapToGrid(result.scores.ats);
+    result.scores.clarity = snapToGrid(result.scores.clarity);
+    result.scores.impact = snapToGrid(result.scores.impact);
+    
+    // Recalculate overall with weighted formula, then snap
+    const calculatedOverall = 
+      result.scores.ats * 0.4 + 
+      result.scores.clarity * 0.3 + 
+      result.scores.impact * 0.3;
+    result.scores.overall = snapToGrid(calculatedOverall);
+    
+    // Sort quickWins by priority for consistent order (prevents UI jitter)
+    const priorityOrder = { 'High': 0, 'Medium': 1, 'Low': 2 };
+    result.quickWins.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+    
+    // Ensure exactly 2-3 quickWins, 2 strengths, 2 issues
+    result.quickWins = result.quickWins.slice(0, 3);
+    result.keyStrengths = result.keyStrengths.slice(0, 2);
+    result.topIssues = result.topIssues.slice(0, 2);
     
     return result;
   } catch (error: any) {

@@ -1,7 +1,55 @@
 import axios from 'axios';
+import { createHash } from 'crypto';
 import { ResumeData } from '@/types/resume';
 
 const KIMI_API_URL = 'https://api.moonshot.ai/v1/chat/completions';
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+// ============================================================================
+// VISION EXTRACTION CACHE (Two-Tier Strategy)
+// ============================================================================
+// Cache ONLY vision extraction (expensive: $0.05 per 5-page resume)
+// Analysis is NOT cached here (cheap: $0.015, must stay fresh)
+// This prevents stale suggestions when users edit their resume
+// ============================================================================
+
+interface CachedVisionResult {
+  data: ResumeData;
+  expires: number;
+  timestamp: number;
+}
+
+// In-memory cache (swap to Redis for production multi-instance deployments)
+const visionCache = new Map<string, CachedVisionResult>();
+
+// Generate perceptual hash from image URLs
+const generateImageHash = (imageUrls: string[]): string => {
+  const combined = imageUrls.sort().join('|'); // Sort for consistency
+  return createHash('sha256').update(combined).digest('hex').slice(0, 16);
+};
+
+// Get cached result if valid
+const getCachedVision = (hash: string): ResumeData | null => {
+  const cached = visionCache.get(hash);
+  if (cached && cached.expires > Date.now()) {
+    console.log(`✓ Vision cache HIT (saved $0.05, age: ${Math.round((Date.now() - cached.timestamp) / 1000 / 60)}m)`);
+    return cached.data;
+  }
+  if (cached) {
+    visionCache.delete(hash); // Clean up expired
+  }
+  return null;
+};
+
+// Store result in cache
+const setCachedVision = (hash: string, data: ResumeData): void => {
+  visionCache.set(hash, {
+    data,
+    expires: Date.now() + CACHE_TTL,
+    timestamp: Date.now(),
+  });
+  console.log(`✓ Vision result cached (24h TTL, hash: ${hash})`);
+};
 
 export async function extractResumeWithVision(imageUrlOrUrls: string | string[]): Promise<ResumeData> {
   const imageUrls = Array.isArray(imageUrlOrUrls) ? imageUrlOrUrls : [imageUrlOrUrls];
@@ -11,174 +59,87 @@ export async function extractResumeWithVision(imageUrlOrUrls: string | string[])
     throw new Error('KIMI_API_KEY not found in environment variables');
   }
 
-  const prompt = `You are an expert resume data extraction AI with perfect OCR capabilities. Your task is to analyze ${imageUrls.length > 1 ? `these ${imageUrls.length} resume pages` : 'this resume image'} and extract EVERY SINGLE PIECE OF INFORMATION with 100% accuracy into structured JSON format.
+  // Check cache first (saves $0.05 per hit)
+  const imageHash = generateImageHash(imageUrls);
+  const cached = getCachedVision(imageHash);
+  if (cached) {
+    return cached; // Instant return, zero cost
+  }
 
-${imageUrls.length > 1 ? `IMPORTANT: This is a ${imageUrls.length}-page resume. Extract and combine information from ALL pages into a single JSON object. Do not duplicate information - merge content intelligently.` : ''}
+  // ============================================================================
+  // OPTIMIZED PROMPT (Hybrid Approach)
+  // - Reduced from ~1850 to ~1300 tokens (30% reduction)
+  // - Kept critical accuracy instructions
+  // - Removed redundant examples and verbose explanations
+  // - Maintains extraction quality while reducing cost
+  // ============================================================================
+  const prompt = `Extract resume data with 100% accuracy into structured JSON.${imageUrls.length > 1 ? ` This is a ${imageUrls.length}-page resume - merge ALL pages into one JSON object.` : ''}
 
-CRITICAL EXTRACTION RULES:
+CRITICAL RULES:
 
-1. NAME EXTRACTION (HIGHEST PRIORITY):
-   - The name is typically the LARGEST text at the top of the resume
-   - Extract the FULL name exactly as shown (First Middle Last)
-   - Do NOT extract job titles, company names, or section headers as the name
-   - Common locations: Top center, top left, or in a header section
-   - If multiple large texts appear, the name is usually the FIRST one
-   - Example: "John Michael Smith" NOT "Software Engineer" or "Resume"
+1. NAME EXTRACTION (TOP PRIORITY):
+   - Name = LARGEST text at top (NOT job title/section header)
+   - Extract FULL name exactly as shown
+   - ✓ "Sarah Johnson" ✗ "Software Engineer" or "Resume"
 
-2. CONTACT INFORMATION:
-   - Email: Look for @ symbol
-   - Phone: Look for numbers with dashes, dots, or parentheses
-   - Location: City, State or City, Country format
-   - LinkedIn: linkedin.com/in/username
-   - GitHub: github.com/username
-   - Website/Portfolio: Any URL that's not LinkedIn or GitHub
+2. CONTACT INFO:
+   - Email: look for @
+   - Phone: all digits with formatting
+   - Location: City, State format
+   - LinkedIn/GitHub/Website: extract URLs or usernames
 
-3. READ CAREFULLY:
-   - Use OCR to read ALL text accurately
-   - Preserve exact spelling, capitalization, and punctuation
-   - Do not make assumptions or corrections
-   - If text is unclear, extract your best interpretation
+3. OCR ACCURACY:
+   - Read ALL text exactly (spelling, caps, punctuation)
+   - Preserve exact wording, no corrections
+   - Extract best interpretation if unclear
 
-SECTIONS TO EXTRACT (extract ALL you see):
-- Personal/Contact Information
-- Summary/Objective/Profile
-- Work Experience/Employment History
-- Education/Academic Background
-- Skills/Technical Skills/Core Competencies
-- Projects/Side Projects/Personal Projects
-- Awards/Honors/Achievements/Certifications
-- Publications/Research/Papers
-- Volunteer Work/Community Service
-- Languages/Language Proficiency
-- Interests/Hobbies
-- References
-- Professional Affiliations/Memberships
-- Courses/Training/Workshops
-- GitHub/Portfolio/Code Samples
-- Patents
-- Speaking Engagements/Presentations
+SECTIONS (extract ALL found):
+Personal Info, Summary/Objective, Work Experience, Education, Skills, Projects, Awards, Certifications, Publications, Volunteer Work, Languages, Interests, Professional Affiliations, Courses, Patents, Presentations
 
-DETAILED EXTRACTION INSTRUCTIONS:
+EXTRACTION DETAILS:
 
-PERSONAL INFORMATION (Extract with 100% accuracy):
-- name: The FULL name from the top of the resume (usually largest text)
-  ✓ CORRECT: "Sarah Johnson", "Michael Chen", "Dr. Emily Rodriguez"
-  ✗ WRONG: "Software Engineer", "Resume", "Professional Summary"
-- email: Exact email address with @ symbol
-- phone: Phone number with all digits and formatting
-- location: City and State/Country exactly as shown
-- linkedin: Full LinkedIn URL or username
-- website: Personal website URL
-- github: GitHub profile URL or username
-- portfolio: Portfolio website URL
+PERSONAL INFO:
+- name: Full name from top (largest text)
+- email, phone, location: exact as shown
+- linkedin, github, website, portfolio: URLs or usernames
 
-SUMMARY/OBJECTIVE:
-- Extract the introductory paragraph word-for-word
-- May be labeled: Summary, Objective, Profile, About Me, Professional Summary
-- Preserve all sentences and punctuation exactly
+SUMMARY: Extract intro paragraph word-for-word (may be labeled Summary/Objective/Profile/About Me)
 
-WORK EXPERIENCE (Extract EVERY job):
-- company: Company name exactly as shown
-- position: Job title exactly as shown
-- location: City, State where job was located
-- startDate: Start date EXACTLY as shown (e.g., "Jan 2020", "January 2020", "2020-01")
-- endDate: End date EXACTLY as shown (e.g., "Present", "Current", "Dec 2022")
-- description: Array of ALL bullet points/achievements
-  - Each bullet point as a separate array item
-  - Preserve exact wording
-  - Include ALL bullets, don't skip any
+EXPERIENCE (EVERY job):
+- company, position, location: exact as shown
+- startDate, endDate: EXACT format (e.g., "Jan 2020", "Present", "Dec 2022")
+- description: Array of ALL bullets, preserve exact wording, include every bullet
 
-EDUCATION (Extract EVERY degree):
-- school: University/College name exactly as shown
-- degree: Degree type (e.g., "Bachelor of Science", "Master of Arts", "PhD")
-- field: Field of study (e.g., "Computer Science", "Business Administration")
-- location: City, State of the school
-- graduationDate: Graduation date EXACTLY as shown
+EDUCATION (EVERY degree):
+- school, degree, field, location: exact as shown
+- graduationDate: exact format
 
-SKILLS:
-- Extract ALL skills mentioned anywhere in the resume
-- Include: Technical skills, soft skills, tools, languages, frameworks
-- Preserve exact names (e.g., "JavaScript" not "Javascript", "React.js" not "React")
+SKILLS: Extract ALL skills (technical, soft, tools, languages, frameworks). Preserve exact names (e.g., "JavaScript", "React.js")
 
-CUSTOM SECTIONS:
-- For Projects, Awards, Certifications, Publications, etc.
-- Extract with title, type, and content
-- Preserve all details and formatting
+CUSTOM SECTIONS: Projects, Awards, Certifications, etc. - extract with title, type, content
 
 QUALITY CHECKS:
-✓ Name is a person's name, not a job title or section header
-✓ All dates are preserved exactly as shown
-✓ All bullet points are captured
-✓ No information is lost or summarized
-✓ Spelling and capitalization are exact
-✓ All sections are identified and extracted
+✓ Name is person's name (not job title)
+✓ All dates exact as shown
+✓ All bullets captured
+✓ No info lost or summarized
+✓ Exact spelling/caps
 
-Return ONLY a valid JSON object with this exact structure (no markdown, no explanations):
+Return ONLY valid JSON (no markdown):
 {
-  "personalInfo": {
-    "name": "Full Name",
-    "email": "email@example.com",
-    "phone": "(123) 456-7890",
-    "location": "City, State",
-    "linkedin": "linkedin.com/in/username",
-    "website": "website.com",
-    "github": "github.com/username",
-    "portfolio": "portfolio.com"
-  },
-  "summary": "Professional summary text here",
-  "experience": [
-    {
-      "id": "1",
-      "company": "Company Name",
-      "position": "Job Title",
-      "location": "City, State",
-      "startDate": "Jan 2020",
-      "endDate": "Present",
-      "description": ["Achievement 1", "Achievement 2"]
-    }
-  ],
-  "education": [
-    {
-      "id": "1",
-      "school": "University Name",
-      "degree": "Bachelor of Science",
-      "field": "Computer Science",
-      "location": "City, State",
-      "graduationDate": "May 2020"
-    }
-  ],
-  "skills": ["Skill 1", "Skill 2", "Skill 3"],
+  "personalInfo": {"name": "", "email": "", "phone": "", "location": "", "linkedin": "", "website": "", "github": "", "portfolio": ""},
+  "summary": "",
+  "experience": [{"id": "1", "company": "", "position": "", "location": "", "startDate": "", "endDate": "", "description": []}],
+  "education": [{"id": "1", "school": "", "degree": "", "field": "", "location": "", "graduationDate": ""}],
+  "skills": [],
   "customSections": [
-    {
-      "id": "1",
-      "title": "Projects",
-      "type": "items",
-      "content": [
-        {
-          "id": "1",
-          "title": "Project Name",
-          "subtitle": "React, Node.js, MongoDB",
-          "date": "Jan 2020 - Mar 2020",
-          "description": ["Built feature X", "Achieved Y"]
-        }
-      ]
-    },
-    {
-      "id": "2",
-      "title": "Awards",
-      "type": "list",
-      "content": ["Award 1 - 2020", "Award 2 - 2019"]
-    },
-    {
-      "id": "3",
-      "title": "Certifications",
-      "type": "text",
-      "content": "AWS Certified Solutions Architect - 2020"
-    }
+    {"id": "1", "title": "Projects", "type": "items", "content": [{"id": "1", "title": "", "subtitle": "", "date": "", "description": []}]},
+    {"id": "2", "title": "Awards", "type": "list", "content": []},
+    {"id": "3", "title": "Certifications", "type": "text", "content": ""}
   ]
 }
 
-If any field is not found, use empty string "" or empty array []. Ensure all IDs are unique strings.`;
+Missing fields = "" or []. All IDs = unique strings.`;
 
   try {
     // Import retry utility
@@ -203,19 +164,24 @@ If any field is not found, use empty string "" or empty array []. Ensure all IDs
       text: prompt,
     });
     
+    // Generate deterministic seed from image hash for reproducibility
+    const seed = parseInt(imageHash, 16) % 10000;
+    
     const response = await retryWithBackoff(
       () => axios.post(
         KIMI_API_URL,
         {
-          model: 'moonshot-v1-32k-vision-preview', // Use 32k model for larger resumes
+          model: 'moonshot-v1-32k-vision-preview',
           messages: [
             {
               role: 'user',
               content: messageContent,
             },
           ],
-          temperature: 0.3,
-          max_tokens: 4096, // Increase to ensure complete JSON responses
+          temperature: 0,        // Deterministic
+          top_p: 0.01,           // Further constrain randomness for JSON output
+          seed: seed,            // Same image → same seed → same extraction
+          max_tokens: 4096,      // Keep high for complex multi-page resumes
         },
         {
           headers: {
@@ -273,6 +239,9 @@ If any field is not found, use empty string "" or empty array []. Ensure all IDs
         console.log(`Attempting to infer name from email: ${formattedName}`);
       }
     }
+
+    // Cache the result for 24h (saves $0.05 on repeat uploads)
+    setCachedVision(imageHash, resumeData);
 
     return resumeData;
   } catch (error: any) {

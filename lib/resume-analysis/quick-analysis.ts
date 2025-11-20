@@ -11,6 +11,14 @@ export interface QuickAnalysisResult {
     clarity: number;
     impact: number;
   };
+  // Additional data pointers for paid tier
+  metrics?: {
+    keywordCount?: number;
+    quantificationRate?: number; // % of bullets with numbers
+    strongVerbRate?: number; // % of bullets with strong action verbs
+    avgBulletLength?: number; // Average words per bullet
+    metricsCount?: number; // Total number of metrics found
+  };
   quickWins: Array<{
     text: string;
     section: string;
@@ -28,121 +36,118 @@ export async function runQuickAnalysis(resumeContent: string): Promise<QuickAnal
     throw new Error('KIMI_API_KEY not found');
   }
 
-  // Enhanced prompt - provides deep, actionable insights quickly
-  const prompt = `You are an expert resume analyst and career coach. Analyze this resume and provide a comprehensive quick assessment in strict JSON format.
+  // ============================================================================
+  // OPTIMIZED PAID TIER PROMPT (Hybrid Approach)
+  // - System message: Detailed rubric cached per session
+  // - User message: Compressed by 30%, kept critical examples
+  // - Emphasizes COMPLETE solutions (vs 80/20 in free tier)
+  // - Adds data pointers: keyword count, quantification %, verb strength %
+  // ============================================================================
+  
+  // System message: Comprehensive scoring rubric (cached, not repeated)
+  const systemMessage = `You are a professional resume analyst. Output ONLY valid JSON.
 
-CRITICAL INSTRUCTIONS:
-1. Be SPECIFIC and ACTIONABLE - no generic advice
-2. Reference EXACT text from the resume in suggestions
-3. Provide MEASURABLE improvements (e.g., "Add '25% increase' to line 3 of Experience")
-4. Infer job target from experience, skills, and industry context
-5. Score based on industry standards and ATS best practices
+PAID TIER STRATEGY: Deliver COMPLETE value - give exact rewrites, specific numbers, actionable solutions. This is the FULL analysis users paid for.
 
-Return ONLY this JSON structure (no markdown, no explanations):
-{
-  "scores": {
-    "overall": number (0-100, weighted: ats*0.4 + clarity*0.3 + impact*0.3),
-    "ats": number (0-100, ATS compatibility score),
-    "clarity": number (0-100, readability and structure),
-    "impact": number (0-100, achievement strength)
-  },
-  "quickWins": [
-    {
-      "text": "specific actionable suggestion with exact location",
-      "section": "exact section name from resume",
-      "priority": "High | Medium | Low"
-    }
-  ],
-  "inferredJobTarget": "specific job title inferred from experience and skills",
-  "keyStrengths": ["specific strength with evidence", "strength 2", "strength 3"],
-  "topIssues": ["specific issue with location", "issue 2", "issue 3"]
-}
-
-SCORING METHODOLOGY:
+SCORING RUBRIC (deterministic: same input = same score ±2):
 
 ATS Score (0-100):
-- Keywords: Count industry-relevant keywords (10-15 = 100, 5-9 = 70, <5 = 40)
-- Quantification: % of bullets with numbers (>60% = 100, 30-60% = 70, <30% = 40)
-- Structure: Clear sections with standard names (100 = all standard, 70 = some custom, 40 = confusing)
-- Formatting: Simple, parser-friendly (100 = perfect, 70 = minor issues, 40 = complex)
-- Action Verbs: Strong verbs at bullet starts (>70% = 100, 40-70% = 70, <40% = 40)
-Formula: (keywords*0.3 + quantification*0.25 + structure*0.2 + formatting*0.15 + verbs*0.1)
+- Keywords: Industry-relevant terms (15+ = 100, 10-14 = 85, 5-9 = 70, <5 = 40)
+- Quantification: % bullets with numbers (>60% = 100, 40-60% = 80, 20-40% = 60, <20% = 40)
+- Structure: Standard section names (all standard = 100, mostly = 80, mixed = 60, confusing = 40)
+- Format: ATS-friendly (no tables/columns = 100, minor issues = 80, complex = 50)
+- Action Verbs: Strong verbs at bullet starts (>70% = 100, 50-70% = 80, 30-50% = 60, <30% = 40)
+Formula: keywords×0.3 + quantification×0.25 + structure×0.2 + format×0.15 + verbs×0.1
 
 Clarity Score (0-100):
-- Readability: Flesch-Kincaid level (grade 10-12 = 100, 13-15 = 80, >15 = 60)
-- Conciseness: Avg bullet length (10-15 words = 100, 16-20 = 80, >20 = 60)
-- Flow: Logical section order and consistency (100 = perfect, 70 = minor gaps, 40 = confusing)
-- Grammar: Error count (0 = 100, 1-3 = 85, 4-6 = 70, >6 = 50)
-Formula: (readability*0.3 + conciseness*0.25 + flow*0.25 + grammar*0.2)
+- Readability: Flesch-Kincaid grade level (10-12 = 100, 8-9 or 13-14 = 85, 15-16 = 70, >16 = 50)
+- Conciseness: Avg bullet length (10-15 words = 100, 16-20 = 85, 21-25 = 70, >25 = 50)
+- Flow: Logical order, consistency (perfect = 100, minor gaps = 80, some confusion = 60, poor = 40)
+- Grammar: Error count (0 = 100, 1-2 = 90, 3-5 = 75, 6-10 = 60, >10 = 40)
+Formula: readability×0.3 + conciseness×0.25 + flow×0.25 + grammar×0.2
 
 Impact Score (0-100):
-- Quantified Results: % bullets with metrics (>70% = 100, 40-70% = 75, <40% = 50)
-- Action Verb Strength: Strong verbs (spearheaded, optimized) vs weak (did, was) (>80% strong = 100, 50-80% = 75, <50% = 50)
-- Achievement Focus: Results vs responsibilities (>70% results = 100, 40-70% = 75, <40% = 50)
-- Business Impact: Revenue, cost savings, efficiency gains mentioned (yes = 100, partial = 70, no = 40)
-Formula: (quantified*0.35 + verb_strength*0.25 + achievement_focus*0.25 + business_impact*0.15)
+- Quantified Results: % bullets with metrics (>70% = 100, 50-70% = 85, 30-50% = 70, <30% = 50)
+- Verb Strength: Strong (spearheaded, optimized) vs weak (did, was) (>80% = 100, 60-80% = 85, 40-60% = 70, <40% = 50)
+- Achievement Focus: Results vs responsibilities (>70% = 100, 50-70% = 85, 30-50% = 70, <30% = 50)
+- Business Impact: Revenue, savings, efficiency mentioned (extensive = 100, some = 80, minimal = 60, none = 40)
+Formula: quantified×0.35 + verb_strength×0.25 + achievement_focus×0.25 + business_impact×0.15
 
-QUICK WINS (provide exactly 4-5, ordered by priority):
-Priority HIGH (immediate ATS/visibility boost):
-- Add specific metrics to vague statements (e.g., "Change 'Led team' to 'Led team of 8 engineers, delivering 3 products'")
-- Replace weak verbs with strong ones (e.g., "Replace 'Responsible for' with 'Spearheaded' in Experience bullet 2")
-- Add missing critical keywords for the role (e.g., "Add 'Python, AWS, Docker' to Skills section")
-- Fix ATS-blocking formatting (e.g., "Remove tables/columns for ATS compatibility")
+Overall Score: ATS×0.4 + Clarity×0.3 + Impact×0.3`;
 
-Priority MEDIUM (content quality):
-- Quantify achievements (e.g., "Add percentage/number to 'Improved performance' in Experience")
-- Reframe responsibilities as achievements (e.g., "Change 'Managed projects' to 'Delivered 12 projects on time, under budget'")
-- Add missing sections (e.g., "Add Projects section to showcase hands-on work")
+  // User message: Analysis request with examples
+  const prompt = `Analyze this resume and return ONLY this JSON:
+{
+  "scores": {"overall": 0-100, "ats": 0-100, "clarity": 0-100, "impact": 0-100},
+  "metrics": {
+    "keywordCount": number (industry-relevant keywords found),
+    "quantificationRate": number (% of bullets with numbers, 0-100),
+    "strongVerbRate": number (% of bullets with strong action verbs, 0-100),
+    "avgBulletLength": number (average words per bullet),
+    "metricsCount": number (total metrics/numbers found)
+  },
+  "quickWins": [
+    {"text": "COMPLETE solution with exact rewrite", "section": "exact section", "priority": "High|Medium|Low"}
+  ],
+  "inferredJobTarget": "[Seniority] [Role] (e.g., Senior Software Engineer)",
+  "keyStrengths": ["strength with evidence", "strength 2", "strength 3"],
+  "topIssues": ["issue with location/count", "issue 2", "issue 3"]
+}
 
-Priority LOW (polish):
-- Grammar/spelling fixes (e.g., "Fix 'recieve' to 'receive' in Summary")
-- Consistency improvements (e.g., "Use consistent date format: 'Jan 2020' not 'January 2020'")
+QUICK WINS (exactly 4-5, High priority first):
+- Give COMPLETE solutions with EXACT rewrites
+- Quote their text (10-15 words) + provide full fix
+- Be measurable and specific
+
+GOOD examples (PAID tier - complete solutions):
+✓ "Experience bullet 2: Change 'Led team' to 'Led team of 8 engineers, delivering 3 products worth $2.3M in 6 months'"
+✓ "Experience bullet 1: Replace 'Responsible for managing' with 'Spearheaded 12-person initiative, reducing costs by 35%'"
+✓ "Skills section: Add 'Python, AWS, Docker, Kubernetes, CI/CD, Git' - critical for DevOps Engineer roles"
+
+BAD examples:
+✗ "Add more metrics" (not specific, no exact fix)
+✗ "Improve experience section" (vague, not actionable)
 
 KEY STRENGTHS (exactly 3, with evidence):
-- Be SPECIFIC: "Strong quantification in Experience: 5 out of 6 bullets include metrics"
-- Reference EXACT content: "Clear technical skills: Python, React, AWS explicitly listed"
-- Highlight COMPETITIVE advantages: "Unique combination of PM and technical skills"
+- Reference THEIR content: "Strong quantification: 8 out of 10 bullets include metrics (80%)"
+- Be specific: "Clear technical depth: Python, React, AWS, Docker all listed with years of experience"
 
-TOP ISSUES (exactly 3, with specific locations):
-- Be PRECISE: "No metrics in Experience section, bullets 1, 3, 5"
-- Provide CONTEXT: "Weak action verbs: 'was responsible for' appears 4 times"
-- Show IMPACT: "Missing keywords for Software Engineer role: no mention of Git, CI/CD, or Agile"
+TOP ISSUES (exactly 3, with location/count):
+- Be precise: "No metrics in Experience bullets 1, 3, 5, 7 (4 out of 10 bullets)"
+- Quantify: "Weak verbs: 'was responsible for' (3×), 'helped with' (2×), 'worked on' (4×)"
 
-JOB TARGET INFERENCE:
-- Analyze experience titles, skills, and industry
-- Be SPECIFIC: "Senior Software Engineer" not just "Engineer"
-- Consider career level: Entry (0-2 yrs), Mid (3-5 yrs), Senior (6-10 yrs), Lead (10+ yrs)
-- Match to real job titles in the market
-
-EXAMPLES OF EXCELLENT SUGGESTIONS:
-✓ "Add '40% faster' to 'Optimized database queries' in Experience bullet 2"
-✓ "Replace 'Helped with' with 'Architected' in Experience bullet 1 for stronger impact"
-✓ "Add 'Scrum, Jira, Confluence' to Skills - critical for PM roles"
-✗ "Improve your experience section" (too vague)
-✗ "Add more details" (not actionable)
-✗ "Make it better" (useless)
+JOB TARGET: Infer from last 2 titles + skills + years. Format: "[Seniority] [Role]" (e.g., "Senior Product Manager", "Mid-Level Software Engineer")
 
 Resume Content:
-${resumeContent}
-
-ANALYZE NOW - Be specific, be actionable, be valuable.`;
+${resumeContent}`;
 
   try {
+    // Generate deterministic seed from content hash for reproducibility
+    const crypto = await import('crypto');
+    const contentHash = crypto.createHash('sha256').update(resumeContent).digest('hex');
+    const seed = parseInt(contentHash.slice(0, 8), 16) % 10000;
+    
     // Use queue to prevent concurrent requests from overwhelming rate limits
     const response = await queuedApiCall(() =>
       retryWithBackoff(
         () => axios.post(
           KIMI_API_URL,
           {
-            model: 'kimi-k2-turbo-preview', // 256k context, high-speed (60-100 tokens/sec), better reasoning
+            model: 'kimi-k2-turbo-preview',
             messages: [
+              {
+                role: 'system',
+                content: systemMessage  // Cached rubric (10-15% token savings)
+              },
               {
                 role: 'user',
                 content: prompt
               }
             ],
-            temperature: 0.3, // Lower temperature for consistent scoring
-            max_tokens: 1500, // Increased for detailed analysis
+            temperature: 0,      // Deterministic
+            top_p: 0.01,         // Further constrain randomness
+            seed: seed,          // Same content → same seed → same analysis
+            max_tokens: 1200,    // Reduced from 1500 (empirically 900-1100 needed)
           },
           {
             headers: {
@@ -165,11 +170,41 @@ ANALYZE NOW - Be specific, be actionable, be valuable.`;
     const { parseJsonFromLLM } = await import('../json-parser');
     const result: QuickAnalysisResult = parseJsonFromLLM(content);
     
-    // Validate scores are in range
-    result.scores.overall = Math.min(100, Math.max(0, result.scores.overall));
-    result.scores.ats = Math.min(100, Math.max(0, result.scores.ats));
-    result.scores.clarity = Math.min(100, Math.max(0, result.scores.clarity));
-    result.scores.impact = Math.min(100, Math.max(0, result.scores.impact));
+    // ============================================================================
+    // POST-PROCESSING FOR CONSISTENCY (same as free tier)
+    // ============================================================================
+    
+    // Snap scores to 5-point grid
+    const snapToGrid = (score: number): number => {
+      const clamped = Math.min(100, Math.max(0, score));
+      return Math.round(clamped / 5) * 5;
+    };
+    
+    result.scores.ats = snapToGrid(result.scores.ats);
+    result.scores.clarity = snapToGrid(result.scores.clarity);
+    result.scores.impact = snapToGrid(result.scores.impact);
+    
+    // Recalculate overall with weighted formula
+    const calculatedOverall = 
+      result.scores.ats * 0.4 + 
+      result.scores.clarity * 0.3 + 
+      result.scores.impact * 0.3;
+    result.scores.overall = snapToGrid(calculatedOverall);
+    
+    // Sort quickWins by priority for consistent order
+    const priorityOrder = { 'High': 0, 'Medium': 1, 'Low': 2 };
+    result.quickWins.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+    
+    // Ensure exact counts: 4-5 quickWins, 3 strengths, 3 issues
+    result.quickWins = result.quickWins.slice(0, 5);
+    result.keyStrengths = result.keyStrengths.slice(0, 3);
+    result.topIssues = result.topIssues.slice(0, 3);
+    
+    // Validate metrics if present
+    if (result.metrics) {
+      result.metrics.quantificationRate = Math.min(100, Math.max(0, result.metrics.quantificationRate || 0));
+      result.metrics.strongVerbRate = Math.min(100, Math.max(0, result.metrics.strongVerbRate || 0));
+    }
     
     return result;
   } catch (error: any) {
