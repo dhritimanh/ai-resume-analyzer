@@ -223,7 +223,7 @@ ${typeof section.content === 'string' ? section.content :
                 {/* App Name & Links */}
                 <div className="mt-8 pt-6 border-t border-[#2a2a2a]">
                   <div className="flex items-center justify-between text-xs text-gray-500">
-                    <p className="text-gray-600 text-sm font-semibold">JAI, AI-native Resume Intelligence</p>
+                    <p className="text-gray-600 text-sm font-normal">JAI, AI-native Resume Intelligence</p>
                     <div className="flex items-center gap-4">
                       <a href="/privacy" className="hover:text-gray-400 transition-colors">Privacy</a>
                       <span className="text-gray-700">•</span>
