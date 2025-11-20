@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Draftr - AI-Powered Resume Intelligence",
-  description: "Get AI-powered resume analysis or redesign your resume with professional templates. Choose from analysis ($3.99) or redesign ($1.99) options.",
+  title: "JAI, AI-native Resume Intelligence",
+  description: "Get AI-powered resume analysis or redesign your resume with professional templates. Choose from resume analysis ($3.99) or redesign ($1.99) options.",
 };
 
 export default function RootLayout({

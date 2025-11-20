@@ -222,13 +222,15 @@ ${typeof section.content === 'string' ? section.content :
 
                 {/* App Name & Links */}
                 <div className="mt-8 pt-6 border-t border-[#2a2a2a]">
-                  <p className="text-gray-600 text-sm font-semibold mb-3">Tars</p>
-                  <div className="flex items-center justify-center gap-6 text-xs text-gray-500">
-                    <a href="/privacy" className="hover:text-gray-400 transition-colors">Privacy</a>
-                    <span className="text-gray-700">•</span>
-                    <a href="/terms" className="hover:text-gray-400 transition-colors">Terms</a>
-                    <span className="text-gray-700">•</span>
-                    <a href="/contact" className="hover:text-gray-400 transition-colors">Contact</a>
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <p className="text-gray-600 text-sm font-semibold">JAI, AI-native Resume Intelligence</p>
+                    <div className="flex items-center gap-4">
+                      <a href="/privacy" className="hover:text-gray-400 transition-colors">Privacy</a>
+                      <span className="text-gray-700">•</span>
+                      <a href="/terms" className="hover:text-gray-400 transition-colors">Terms</a>
+                      <span className="text-gray-700">•</span>
+                      <a href="/contact" className="hover:text-gray-400 transition-colors">Contact</a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -664,7 +666,7 @@ ${typeof section.content === 'string' ? section.content :
               </button>
 
               <p className="text-xs text-center text-gray-500 mt-4">
-                Secure payment via Stripe • No subscription BS
+                Secure payment via Dodo Payments • No subscription
               </p>
             </div>
           </div>
