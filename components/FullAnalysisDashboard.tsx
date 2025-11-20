@@ -209,13 +209,13 @@ export default function FullAnalysisDashboard({ resumeContent, resumeData, onBac
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl text-white font-bold text-gray-900">Full Resume Analysis</h1>
+            <h1 className="text-3xl text-white font-bold text-white">Full Resume Analysis</h1>
             <p className="text-white mt-1">Comprehensive insights across 5 categories</p>
           </div>
           {onBack && (
             <button
               onClick={onBack}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors"
             >
               ← Back
             </button>
@@ -250,7 +250,7 @@ export default function FullAnalysisDashboard({ resumeContent, resumeData, onBac
             <button
               onClick={handleDownloadReport}
               disabled={downloadingReport}
-              className="w-full bg-white text-purple-600 py-3 px-6 rounded-lg font-semibold hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+              className="w-full bg-white text-purple-400 py-3 px-6 rounded-lg font-semibold hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
             >
               {downloadingReport ? (
                 <>
@@ -283,7 +283,7 @@ export default function FullAnalysisDashboard({ resumeContent, resumeData, onBac
               className={`px-6 py-3 rounded-lg font-semibold whitespace-nowrap transition-all ${
                 activeTab === tab.id
                   ? 'bg-indigo-600 text-white shadow-lg'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700 border border-gray-700'
               }`}
             >
               {tab.label}
@@ -295,21 +295,21 @@ export default function FullAnalysisDashboard({ resumeContent, resumeData, onBac
       </div>
 
       {/* Content */}
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="bg-black border border-gray-700 rounded-xl shadow-lg p-8">
         {retryMessage && (
-          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="mb-4 p-4 bg-yellow-900/30 border border-yellow-700 rounded-lg">
             <div className="flex items-center gap-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-600"></div>
-              <p className="text-sm text-yellow-800 font-medium">{retryMessage}</p>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-yellow-400"></div>
+              <p className="text-sm text-yellow-200 font-medium">{retryMessage}</p>
             </div>
           </div>
         )}
         
         {loading[activeTab] ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Analyzing your resume...</p>
-            <p className="text-sm text-gray-500 mt-2">This may take 5-10 seconds</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-400 mx-auto mb-4"></div>
+            <p className="text-gray-300">Analyzing your resume...</p>
+            <p className="text-sm text-gray-400 mt-2">This may take 5-10 seconds</p>
           </div>
         ) : (
           <>
@@ -339,27 +339,27 @@ export default function FullAnalysisDashboard({ resumeContent, resumeData, onBac
 function QuickAnalysisView({ data }: { data: QuickAnalysisResult }) {
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Quick Analysis</h2>
+      <h2 className="text-2xl font-bold text-white">Quick Analysis</h2>
       
       {/* Quick Wins */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">Quick Wins</h3>
+        <h3 className="text-lg font-semibold text-gray-200 mb-3">Quick Wins</h3>
         <div className="space-y-2">
           {data.quickWins.map((win, idx) => (
             <div key={idx} className={`p-4 rounded-lg border-l-4 ${
-              win.priority === 'High' ? 'border-red-500 bg-red-50' :
-              win.priority === 'Medium' ? 'border-yellow-500 bg-yellow-50' :
-              'border-green-500 bg-green-50'
+              win.priority === 'High' ? 'border-red-500 bg-red-900/20' :
+              win.priority === 'Medium' ? 'border-yellow-500 bg-yellow-900/20' :
+              'border-green-500 bg-green-900/20'
             }`}>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-gray-900">{win.text}</div>
-                  <div className="text-xs text-gray-600 mt-1">Section: {win.section}</div>
+                  <div className="text-sm font-medium text-gray-200">{win.text}</div>
+                  <div className="text-xs text-gray-400 mt-1">Section: {win.section}</div>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded font-semibold ${
-                  win.priority === 'High' ? 'bg-red-100 text-red-700' :
-                  win.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                  'bg-green-100 text-green-700'
+                  win.priority === 'High' ? 'bg-red-900/40 text-red-300' :
+                  win.priority === 'Medium' ? 'bg-yellow-900/40 text-yellow-300' :
+                  'bg-green-900/40 text-green-300'
                 }`}>
                   {win.priority}
                 </span>
@@ -372,22 +372,22 @@ function QuickAnalysisView({ data }: { data: QuickAnalysisResult }) {
       {/* Strengths & Issues */}
       <div className="grid grid-cols-2 gap-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">Key Strengths</h3>
+          <h3 className="text-lg font-semibold text-gray-200 mb-3">Key Strengths</h3>
           <ul className="space-y-2">
             {data.keyStrengths.map((strength, idx) => (
-              <li key={idx} className="text-sm text-gray-700 flex items-start">
-                <span className="text-green-500 mr-2">✓</span>
+              <li key={idx} className="text-sm text-gray-300 flex items-start">
+                <span className="text-green-400 mr-2">✓</span>
                 {strength}
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">Top Issues</h3>
+          <h3 className="text-lg font-semibold text-gray-200 mb-3">Top Issues</h3>
           <ul className="space-y-2">
             {data.topIssues.map((issue, idx) => (
-              <li key={idx} className="text-sm text-gray-700 flex items-start">
-                <span className="text-red-500 mr-2">✗</span>
+              <li key={idx} className="text-sm text-gray-300 flex items-start">
+                <span className="text-red-400 mr-2">✗</span>
                 {issue}
               </li>
             ))}
@@ -402,85 +402,85 @@ function SectionAnalysisView({ data }: { data: SectionAnalysisResult }) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Section-by-Section Analysis</h2>
-        <p className="text-gray-600">Detailed breakdown of each resume section</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Section-by-Section Analysis</h2>
+        <p className="text-gray-400">Detailed breakdown of each resume section</p>
       </div>
 
       {/* Section Cards */}
       <div className="space-y-6">
         {data.sectionAnalysis.map((section, idx) => (
-          <div key={idx} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+          <div key={idx} className="border border-gray-700 rounded-lg p-6 hover:border-gray-600 transition-colors bg-gray-900/50">
             <div className="flex items-start justify-between mb-4">
-              <h3 className="text-xl font-bold text-gray-900">{section.name}</h3>
+              <h3 className="text-xl font-bold text-white">{section.name}</h3>
               <div className="text-right">
-                <div className="text-sm text-gray-600">Relevance</div>
-                <div className="text-lg font-bold text-indigo-600">{section.jobTargetRelevance}</div>
+                <div className="text-sm text-gray-400">Relevance</div>
+                <div className="text-lg font-bold text-indigo-400">{section.jobTargetRelevance}</div>
               </div>
             </div>
 
             {/* Metrics Grid */}
-            <div className="grid grid-cols-4 gap-4 mb-4 p-4 bg-gray-50 rounded-lg">
+            <div className="grid grid-cols-4 gap-4 mb-4 p-4 bg-gray-800/50 border border-gray-700 rounded-lg">
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{section.metrics.word_count}</div>
-                <div className="text-xs text-gray-600">Words</div>
+                <div className="text-2xl font-bold text-gray-200">{section.metrics.word_count}</div>
+                <div className="text-xs text-gray-400">Words</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{section.metrics.readability_score}</div>
-                <div className="text-xs text-gray-600">Readability</div>
+                <div className="text-2xl font-bold text-gray-200">{section.metrics.readability_score}</div>
+                <div className="text-xs text-gray-400">Readability</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{Math.round(section.metrics.quantification_ratio * 100)}%</div>
-                <div className="text-xs text-gray-600">Quantified</div>
+                <div className="text-2xl font-bold text-gray-200">{Math.round(section.metrics.quantification_ratio * 100)}%</div>
+                <div className="text-xs text-gray-400">Quantified</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900">{section.metrics.keyword_density}</div>
-                <div className="text-xs text-gray-600">Keywords</div>
+                <div className="text-2xl font-bold text-gray-200">{section.metrics.keyword_density}</div>
+                <div className="text-xs text-gray-400">Keywords</div>
               </div>
             </div>
 
             {/* Feedback */}
             <div className="space-y-3 mb-4">
               <div className="text-sm">
-                <span className="font-semibold text-gray-700">Content: </span>
-                <span className="text-gray-600">{section.feedback.content_relevance}</span>
+                <span className="font-semibold text-gray-300">Content: </span>
+                <span className="text-gray-400">{section.feedback.content_relevance}</span>
               </div>
               <div className="text-sm">
-                <span className="font-semibold text-gray-700">Structure: </span>
-                <span className="text-gray-600">{section.feedback.structure_clarity}</span>
+                <span className="font-semibold text-gray-300">Structure: </span>
+                <span className="text-gray-400">{section.feedback.structure_clarity}</span>
               </div>
               <div className="text-sm">
-                <span className="font-semibold text-gray-700">Impact: </span>
-                <span className="text-gray-600">{section.feedback.impact_assessment}</span>
+                <span className="font-semibold text-gray-300">Impact: </span>
+                <span className="text-gray-400">{section.feedback.impact_assessment}</span>
               </div>
               <div className="text-sm">
-                <span className="font-semibold text-gray-700">Branding: </span>
-                <span className="text-gray-600">{section.feedback.branding_potential}</span>
+                <span className="font-semibold text-gray-300">Branding: </span>
+                <span className="text-gray-400">{section.feedback.branding_potential}</span>
               </div>
             </div>
 
             {/* Suggestions */}
             {section.suggestions.length > 0 && (
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Suggestions</h4>
+                <h4 className="font-semibold text-gray-200 mb-2">Suggestions</h4>
                 <div className="space-y-2">
                   {section.suggestions.map((suggestion, sIdx) => (
                     <div key={sIdx} className={`p-3 rounded-lg text-sm border-l-4 ${
-                      suggestion.priority === 'High' ? 'border-red-500 bg-red-50' :
-                      suggestion.priority === 'Medium' ? 'border-yellow-500 bg-yellow-50' :
-                      'border-green-500 bg-green-50'
+                      suggestion.priority === 'High' ? 'border-red-500 bg-red-900/20' :
+                      suggestion.priority === 'Medium' ? 'border-yellow-500 bg-yellow-900/20' :
+                      'border-green-500 bg-green-900/20'
                     }`}>
                       <div className="flex items-start justify-between mb-1">
-                        <span className="font-medium text-gray-900">{suggestion.text}</span>
+                        <span className="font-medium text-gray-200">{suggestion.text}</span>
                         <span className={`text-xs px-2 py-1 rounded font-semibold ml-2 ${
-                          suggestion.priority === 'High' ? 'bg-red-100 text-red-700' :
-                          suggestion.priority === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-green-100 text-green-700'
+                          suggestion.priority === 'High' ? 'bg-red-900/40 text-red-300' :
+                          suggestion.priority === 'Medium' ? 'bg-yellow-900/40 text-yellow-300' :
+                          'bg-green-900/40 text-green-300'
                         }`}>
                           {suggestion.priority}
                         </span>
                       </div>
                       {suggestion.example && (
-                        <div className="text-xs text-gray-600 mt-1 italic">Example: {suggestion.example}</div>
+                        <div className="text-xs text-gray-400 mt-1 italic">Example: {suggestion.example}</div>
                       )}
                     </div>
                   ))}
@@ -492,53 +492,53 @@ function SectionAnalysisView({ data }: { data: SectionAnalysisResult }) {
       </div>
 
       {/* Formatting Analysis */}
-      <div className="border border-gray-200 rounded-lg p-6 bg-blue-50">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">📄 Formatting & ATS Compatibility</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-blue-900/20">
+        <h3 className="text-lg font-bold text-white mb-4">📄 Formatting & ATS Compatibility</h3>
         <div className="grid grid-cols-4 gap-4 mb-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{data.formattingAnalysis.metrics.font_consistency_score}</div>
-            <div className="text-xs text-gray-600">Font Consistency</div>
+            <div className="text-2xl font-bold text-blue-400">{data.formattingAnalysis.metrics.font_consistency_score}</div>
+            <div className="text-xs text-gray-400">Font Consistency</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{data.formattingAnalysis.metrics.whitespace_usage_score}</div>
-            <div className="text-xs text-gray-600">Whitespace</div>
+            <div className="text-2xl font-bold text-blue-400">{data.formattingAnalysis.metrics.whitespace_usage_score}</div>
+            <div className="text-xs text-gray-400">Whitespace</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{data.formattingAnalysis.metrics.visual_hierarchy_score}</div>
-            <div className="text-xs text-gray-600">Visual Hierarchy</div>
+            <div className="text-2xl font-bold text-blue-400">{data.formattingAnalysis.metrics.visual_hierarchy_score}</div>
+            <div className="text-xs text-gray-400">Visual Hierarchy</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{data.formattingAnalysis.metrics.readability_formatting_score}</div>
-            <div className="text-xs text-gray-600">Readability</div>
+            <div className="text-2xl font-bold text-blue-400">{data.formattingAnalysis.metrics.readability_formatting_score}</div>
+            <div className="text-xs text-gray-400">Readability</div>
           </div>
         </div>
-        <p className="text-sm text-gray-700 mb-3">{data.formattingAnalysis.feedback}</p>
+        <p className="text-sm text-gray-300 mb-3">{data.formattingAnalysis.feedback}</p>
         <div className="text-sm">
-          <span className="font-semibold text-gray-900">ATS Compatibility: </span>
-          <span className="text-gray-700">{data.formattingAnalysis.atsCompatibility}</span>
+          <span className="font-semibold text-white">ATS Compatibility: </span>
+          <span className="text-gray-300">{data.formattingAnalysis.atsCompatibility}</span>
         </div>
       </div>
 
       {/* Quantification Analysis */}
-      <div className="border border-gray-200 rounded-lg p-6 bg-green-50">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">📊 Quantification Analysis</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-green-900/20">
+        <h3 className="text-lg font-bold text-white mb-4">📊 Quantification Analysis</h3>
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{data.quantificationAnalysis.metrics.quantification_impact_score}</div>
-            <div className="text-xs text-gray-600">Impact Score</div>
+            <div className="text-2xl font-bold text-green-400">{data.quantificationAnalysis.metrics.quantification_impact_score}</div>
+            <div className="text-xs text-gray-400">Impact Score</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{data.quantificationAnalysis.metrics.quantification_clarity_score}</div>
-            <div className="text-xs text-gray-600">Clarity Score</div>
+            <div className="text-2xl font-bold text-green-400">{data.quantificationAnalysis.metrics.quantification_clarity_score}</div>
+            <div className="text-xs text-gray-400">Clarity Score</div>
           </div>
         </div>
-        <p className="text-sm text-gray-700 mb-3">{data.quantificationAnalysis.feedback}</p>
+        <p className="text-sm text-gray-300 mb-3">{data.quantificationAnalysis.feedback}</p>
         {data.quantificationAnalysis.examples.length > 0 && (
           <div>
-            <h4 className="font-semibold text-gray-900 mb-2 text-sm">Examples of Strong Metrics:</h4>
+            <h4 className="font-semibold text-white mb-2 text-sm">Examples of Strong Metrics:</h4>
             <ul className="space-y-1">
               {data.quantificationAnalysis.examples.map((example, idx) => (
-                <li key={idx} className="text-sm text-gray-700 flex items-start">
+                <li key={idx} className="text-sm text-gray-300 flex items-start">
                   <span className="text-green-500 mr-2">→</span>
                   {example}
                 </li>
@@ -555,50 +555,50 @@ function LanguageAnalysisView({ data }: { data: LanguageBrandingResult }) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Language & Personal Branding</h2>
-        <p className="text-gray-600">Writing quality, vocabulary, and brand assessment</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Language & Personal Branding</h2>
+        <p className="text-gray-400">Writing quality, vocabulary, and brand assessment</p>
       </div>
 
       {/* Language Analysis */}
-      <div className="border border-gray-200 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">✍️ Language Quality</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-gray-900/50">
+        <h3 className="text-xl font-bold text-white mb-4">✍️ Language Quality</h3>
         
         {/* Key Metrics */}
-        <div className="grid grid-cols-4 gap-4 mb-6 p-4 bg-gray-50 rounded-lg">
+        <div className="grid grid-cols-4 gap-4 mb-6 p-4 bg-gray-800/50 border border-gray-700 rounded-lg">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{data.languageAnalysis.word_count}</div>
-            <div className="text-xs text-gray-600">Total Words</div>
+            <div className="text-2xl font-bold text-white">{data.languageAnalysis.word_count}</div>
+            <div className="text-xs text-gray-400">Total Words</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{data.languageAnalysis.unique_word_count}</div>
-            <div className="text-xs text-gray-600">Unique Words</div>
+            <div className="text-2xl font-bold text-white">{data.languageAnalysis.unique_word_count}</div>
+            <div className="text-xs text-gray-400">Unique Words</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900">{data.languageAnalysis.avg_sentence_length}</div>
-            <div className="text-xs text-gray-600">Avg Sentence</div>
+            <div className="text-2xl font-bold text-white">{data.languageAnalysis.avg_sentence_length}</div>
+            <div className="text-xs text-gray-400">Avg Sentence</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-red-600">{data.languageAnalysis.grammar_issues.total}</div>
-            <div className="text-xs text-gray-600">Grammar Issues</div>
+            <div className="text-2xl font-bold text-red-400">{data.languageAnalysis.grammar_issues.total}</div>
+            <div className="text-xs text-gray-400">Grammar Issues</div>
           </div>
         </div>
 
         {/* Grammar Issues Breakdown */}
         {data.languageAnalysis.grammar_issues.total > 0 && (
-          <div className="mb-6 p-4 bg-red-50 rounded-lg border border-red-200">
-            <h4 className="font-semibold text-gray-900 mb-3">Grammar Issues by Type</h4>
+          <div className="mb-6 p-4 bg-red-900/20 rounded-lg border border-red-700">
+            <h4 className="font-semibold text-white mb-3">Grammar Issues by Type</h4>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <div className="text-lg font-bold text-red-600">{data.languageAnalysis.grammar_issues.by_type['Subject-Verb']}</div>
-                <div className="text-xs text-gray-600">Subject-Verb</div>
+                <div className="text-lg font-bold text-red-400">{data.languageAnalysis.grammar_issues.by_type['Subject-Verb']}</div>
+                <div className="text-xs text-gray-400">Subject-Verb</div>
               </div>
               <div>
-                <div className="text-lg font-bold text-red-600">{data.languageAnalysis.grammar_issues.by_type.Tense}</div>
-                <div className="text-xs text-gray-600">Tense</div>
+                <div className="text-lg font-bold text-red-400">{data.languageAnalysis.grammar_issues.by_type.Tense}</div>
+                <div className="text-xs text-gray-400">Tense</div>
               </div>
               <div>
-                <div className="text-lg font-bold text-red-600">{data.languageAnalysis.grammar_issues.by_type.Punctuation}</div>
-                <div className="text-xs text-gray-600">Punctuation</div>
+                <div className="text-lg font-bold text-red-400">{data.languageAnalysis.grammar_issues.by_type.Punctuation}</div>
+                <div className="text-xs text-gray-400">Punctuation</div>
               </div>
             </div>
           </div>
@@ -606,48 +606,48 @@ function LanguageAnalysisView({ data }: { data: LanguageBrandingResult }) {
 
         {/* Vocabulary Scores */}
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="p-4 bg-blue-50 rounded-lg">
+          <div className="p-4 bg-blue-900/20 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-gray-900">Vocabulary Richness</h4>
-              <span className="text-2xl font-bold text-blue-600">{data.languageAnalysis.vocabulary_richness.score}/100</span>
+              <h4 className="font-semibold text-white">Vocabulary Richness</h4>
+              <span className="text-2xl font-bold text-blue-400">{data.languageAnalysis.vocabulary_richness.score}/100</span>
             </div>
-            <p className="text-sm text-gray-600">{data.languageAnalysis.vocabulary_richness.reason}</p>
+            <p className="text-sm text-gray-400">{data.languageAnalysis.vocabulary_richness.reason}</p>
           </div>
-          <div className="p-4 bg-purple-50 rounded-lg">
+          <div className="p-4 bg-purple-900/20 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-gray-900">Vocabulary Level</h4>
-              <span className="text-2xl font-bold text-purple-600">{data.languageAnalysis.vocabulary_level_appropriateness.score}/100</span>
+              <h4 className="font-semibold text-white">Vocabulary Level</h4>
+              <span className="text-2xl font-bold text-purple-400">{data.languageAnalysis.vocabulary_level_appropriateness.score}/100</span>
             </div>
-            <p className="text-sm text-gray-600">{data.languageAnalysis.vocabulary_level_appropriateness.reason}</p>
+            <p className="text-sm text-gray-400">{data.languageAnalysis.vocabulary_level_appropriateness.reason}</p>
           </div>
         </div>
 
         {/* Action Verbs */}
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Action Verb Usage ({data.languageAnalysis.action_verb_usage.total_percentage}%)</h4>
+          <h4 className="font-semibold text-white mb-3">Action Verb Usage ({data.languageAnalysis.action_verb_usage.total_percentage}%)</h4>
           <div className="grid grid-cols-3 gap-4 mb-4">
-            <div className="p-3 bg-red-50 rounded-lg text-center">
-              <div className="text-xl font-bold text-red-600">{data.languageAnalysis.action_verb_usage.by_strength.weak}</div>
-              <div className="text-xs text-gray-600">Weak Verbs</div>
+            <div className="p-3 bg-red-900/20 rounded-lg text-center">
+              <div className="text-xl font-bold text-red-400">{data.languageAnalysis.action_verb_usage.by_strength.weak}</div>
+              <div className="text-xs text-gray-400">Weak Verbs</div>
             </div>
-            <div className="p-3 bg-yellow-50 rounded-lg text-center">
-              <div className="text-xl font-bold text-yellow-600">{data.languageAnalysis.action_verb_usage.by_strength.medium}</div>
-              <div className="text-xs text-gray-600">Medium Verbs</div>
+            <div className="p-3 bg-yellow-900/20 rounded-lg text-center">
+              <div className="text-xl font-bold text-yellow-400">{data.languageAnalysis.action_verb_usage.by_strength.medium}</div>
+              <div className="text-xs text-gray-400">Medium Verbs</div>
             </div>
-            <div className="p-3 bg-green-50 rounded-lg text-center">
-              <div className="text-xl font-bold text-green-600">{data.languageAnalysis.action_verb_usage.by_strength.strong}</div>
-              <div className="text-xs text-gray-600">Strong Verbs</div>
+            <div className="p-3 bg-green-900/20 rounded-lg text-center">
+              <div className="text-xl font-bold text-green-400">{data.languageAnalysis.action_verb_usage.by_strength.strong}</div>
+              <div className="text-xs text-gray-400">Strong Verbs</div>
             </div>
           </div>
           {data.languageAnalysis.action_verb_usage.examples.length > 0 && (
             <div className="space-y-2">
               {data.languageAnalysis.action_verb_usage.examples.slice(0, 5).map((example, idx) => (
                 <div key={idx} className={`p-2 rounded text-sm ${
-                  example.strength === 'strong' ? 'bg-green-50 border-l-4 border-green-500' :
-                  example.strength === 'medium' ? 'bg-yellow-50 border-l-4 border-yellow-500' :
-                  'bg-red-50 border-l-4 border-red-500'
+                  example.strength === 'strong' ? 'bg-green-900/20 border-l-4 border-green-500 text-gray-300' :
+                  example.strength === 'medium' ? 'bg-yellow-900/20 border-l-4 border-yellow-500 text-gray-300' :
+                  'bg-red-900/20 border-l-4 border-red-500 text-gray-300'
                 }`}>
-                  <span className="font-semibold">{example.verb}</span> - {example.context}
+                  <span className="font-semibold text-white">{example.verb}</span> - {example.context}
                 </div>
               ))}
             </div>
@@ -655,21 +655,21 @@ function LanguageAnalysisView({ data }: { data: LanguageBrandingResult }) {
         </div>
 
         {/* Tone */}
-        <div className="p-4 bg-indigo-50 rounded-lg">
+        <div className="p-4 bg-indigo-900/20 border border-indigo-700 rounded-lg">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="font-semibold text-gray-900">Tone: {data.languageAnalysis.tone.primary_tone}</h4>
-            <span className="text-2xl font-bold text-indigo-600">{data.languageAnalysis.tone.score}/100</span>
+            <h4 className="font-semibold text-white">Tone: {data.languageAnalysis.tone.primary_tone}</h4>
+            <span className="text-2xl font-bold text-indigo-400">{data.languageAnalysis.tone.score}/100</span>
           </div>
-          <p className="text-sm text-gray-600">{data.languageAnalysis.tone.reason}</p>
+          <p className="text-sm text-gray-400">{data.languageAnalysis.tone.reason}</p>
         </div>
 
         {/* Suggestions */}
         {data.languageAnalysis.suggestions.length > 0 && (
           <div className="mt-6">
-            <h4 className="font-semibold text-gray-900 mb-3">Suggestions</h4>
+            <h4 className="font-semibold text-white mb-3">Suggestions</h4>
             <ul className="space-y-2">
               {data.languageAnalysis.suggestions.map((suggestion, idx) => (
-                <li key={idx} className="text-sm text-gray-700 flex items-start p-3 bg-gray-50 rounded">
+                <li key={idx} className="text-sm text-gray-300 flex items-start p-3 bg-gray-800/50 border border-gray-700 rounded">
                   <span className="text-indigo-500 mr-2">→</span>
                   {suggestion}
                 </li>
@@ -680,53 +680,53 @@ function LanguageAnalysisView({ data }: { data: LanguageBrandingResult }) {
       </div>
 
       {/* Personal Branding */}
-      <div className="border border-gray-200 rounded-lg p-6 bg-gradient-to-br from-purple-50 to-pink-50">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🎨 Personal Branding</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-gradient-to-br from-purple-900/20 to-pink-900/20">
+        <h3 className="text-xl font-bold text-white mb-4">🎨 Personal Branding</h3>
         
         {/* Brand Scores */}
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="p-4 bg-white rounded-lg shadow-sm">
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-gray-900 text-sm">Brand Clarity</h4>
-              <span className="text-xl font-bold text-purple-600">{data.personalBrandingAnalysis.metrics.brand_clarity_score.score}/100</span>
+              <h4 className="font-semibold text-white text-sm">Brand Clarity</h4>
+              <span className="text-xl font-bold text-purple-400">{data.personalBrandingAnalysis.metrics.brand_clarity_score.score}/100</span>
             </div>
-            <p className="text-xs text-gray-600">{data.personalBrandingAnalysis.metrics.brand_clarity_score.reason}</p>
+            <p className="text-xs text-gray-400">{data.personalBrandingAnalysis.metrics.brand_clarity_score.reason}</p>
           </div>
-          <div className="p-4 bg-white rounded-lg shadow-sm">
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-gray-900 text-sm">Brand Consistency</h4>
-              <span className="text-xl font-bold text-purple-600">{data.personalBrandingAnalysis.metrics.brand_consistency_score.score}/100</span>
+              <h4 className="font-semibold text-white text-sm">Brand Consistency</h4>
+              <span className="text-xl font-bold text-purple-400">{data.personalBrandingAnalysis.metrics.brand_consistency_score.score}/100</span>
             </div>
-            <p className="text-xs text-gray-600">{data.personalBrandingAnalysis.metrics.brand_consistency_score.reason}</p>
+            <p className="text-xs text-gray-400">{data.personalBrandingAnalysis.metrics.brand_consistency_score.reason}</p>
           </div>
-          <div className="p-4 bg-white rounded-lg shadow-sm">
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-gray-900 text-sm">Brand Uniqueness</h4>
-              <span className="text-xl font-bold text-purple-600">{data.personalBrandingAnalysis.metrics.brand_uniqueness_score.score}/100</span>
+              <h4 className="font-semibold text-white text-sm">Brand Uniqueness</h4>
+              <span className="text-xl font-bold text-purple-400">{data.personalBrandingAnalysis.metrics.brand_uniqueness_score.score}/100</span>
             </div>
-            <p className="text-xs text-gray-600">{data.personalBrandingAnalysis.metrics.brand_uniqueness_score.reason}</p>
+            <p className="text-xs text-gray-400">{data.personalBrandingAnalysis.metrics.brand_uniqueness_score.reason}</p>
           </div>
-          <div className="p-4 bg-white rounded-lg shadow-sm">
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg shadow-sm">
             <div className="flex items-center justify-between mb-2">
-              <h4 className="font-semibold text-gray-900 text-sm">Visual Branding</h4>
-              <span className="text-xl font-bold text-purple-600">{data.personalBrandingAnalysis.metrics.visual_branding.score}/100</span>
+              <h4 className="font-semibold text-white text-sm">Visual Branding</h4>
+              <span className="text-xl font-bold text-purple-400">{data.personalBrandingAnalysis.metrics.visual_branding.score}/100</span>
             </div>
-            <p className="text-xs text-gray-600">{data.personalBrandingAnalysis.metrics.visual_branding.reason}</p>
+            <p className="text-xs text-gray-400">{data.personalBrandingAnalysis.metrics.visual_branding.reason}</p>
           </div>
         </div>
 
-        <div className="p-4 bg-white rounded-lg shadow-sm mb-4">
-          <h4 className="font-semibold text-gray-900 mb-2">Overall Feedback</h4>
-          <p className="text-sm text-gray-700">{data.personalBrandingAnalysis.feedback}</p>
+        <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg shadow-sm mb-4">
+          <h4 className="font-semibold text-white mb-2">Overall Feedback</h4>
+          <p className="text-sm text-gray-300">{data.personalBrandingAnalysis.feedback}</p>
         </div>
 
         {data.personalBrandingAnalysis.suggestions.length > 0 && (
           <div>
-            <h4 className="font-semibold text-gray-900 mb-3">Branding Suggestions</h4>
+            <h4 className="font-semibold text-white mb-3">Branding Suggestions</h4>
             <ul className="space-y-2">
               {data.personalBrandingAnalysis.suggestions.map((suggestion, idx) => (
-                <li key={idx} className="text-sm text-gray-700 flex items-start p-3 bg-white rounded shadow-sm">
-                  <span className="text-purple-500 mr-2">✨</span>
+                <li key={idx} className="text-sm text-gray-300 flex items-start p-3 bg-gray-900/50 border border-gray-700 rounded shadow-sm">
+                  <span className="text-purple-400 mr-2">✨</span>
                   {suggestion}
                 </li>
               ))}
@@ -744,46 +744,46 @@ function CareerAnalysisView({ data }: { data: CareerTailoringResult }) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Career Roadmap & Tailoring</h2>
-        <p className="text-gray-600">Target roles, skill gaps, and career progression plan</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Career Roadmap & Tailoring</h2>
+        <p className="text-gray-400">Target roles, skill gaps, and career progression plan</p>
       </div>
 
       {/* Tailoring Analysis */}
-      <div className="border border-gray-200 rounded-lg p-6 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🎯 Job Target Alignment</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-gradient-to-br from-blue-900/20 to-indigo-900/20">
+        <h3 className="text-xl font-bold text-white mb-4">🎯 Job Target Alignment</h3>
         <div className="mb-4">
-          <span className="text-lg font-semibold text-indigo-600">{data.tailoringAnalysis.job_target}</span>
+          <span className="text-lg font-semibold text-indigo-400">{data.tailoringAnalysis.job_target}</span>
         </div>
 
         <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="p-4 bg-white rounded-lg shadow-sm text-center">
-            <div className="text-2xl font-bold text-indigo-600">{data.tailoringAnalysis.metrics.keyword_match_score.score}/100</div>
-            <div className="text-xs text-gray-600 mb-2">Keyword Match</div>
-            <p className="text-xs text-gray-600">{data.tailoringAnalysis.metrics.keyword_match_score.reason}</p>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg shadow-sm text-center">
+            <div className="text-2xl font-bold text-indigo-400">{data.tailoringAnalysis.metrics.keyword_match_score.score}/100</div>
+            <div className="text-xs text-gray-400 mb-2">Keyword Match</div>
+            <p className="text-xs text-gray-400">{data.tailoringAnalysis.metrics.keyword_match_score.reason}</p>
           </div>
-          <div className="p-4 bg-white rounded-lg shadow-sm text-center">
-            <div className="text-2xl font-bold text-indigo-600">{data.tailoringAnalysis.metrics.skill_alignment_score.score}/100</div>
-            <div className="text-xs text-gray-600 mb-2">Skill Alignment</div>
-            <p className="text-xs text-gray-600">{data.tailoringAnalysis.metrics.skill_alignment_score.reason}</p>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg shadow-sm text-center">
+            <div className="text-2xl font-bold text-indigo-400">{data.tailoringAnalysis.metrics.skill_alignment_score.score}/100</div>
+            <div className="text-xs text-gray-400 mb-2">Skill Alignment</div>
+            <p className="text-xs text-gray-400">{data.tailoringAnalysis.metrics.skill_alignment_score.reason}</p>
           </div>
-          <div className="p-4 bg-white rounded-lg shadow-sm text-center">
-            <div className="text-2xl font-bold text-indigo-600">{data.tailoringAnalysis.metrics.experience_relevance_score.score}/100</div>
-            <div className="text-xs text-gray-600 mb-2">Experience Relevance</div>
-            <p className="text-xs text-gray-600">{data.tailoringAnalysis.metrics.experience_relevance_score.reason}</p>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg shadow-sm text-center">
+            <div className="text-2xl font-bold text-indigo-400">{data.tailoringAnalysis.metrics.experience_relevance_score.score}/100</div>
+            <div className="text-xs text-gray-400 mb-2">Experience Relevance</div>
+            <p className="text-xs text-gray-400">{data.tailoringAnalysis.metrics.experience_relevance_score.reason}</p>
           </div>
         </div>
 
-        <div className="p-4 bg-white rounded-lg shadow-sm mb-4">
-          <p className="text-sm text-gray-700">{data.tailoringAnalysis.feedback}</p>
+        <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg shadow-sm mb-4">
+          <p className="text-sm text-gray-300">{data.tailoringAnalysis.feedback}</p>
         </div>
 
         {data.tailoringAnalysis.suggestions.length > 0 && (
           <div>
-            <h4 className="font-semibold text-gray-900 mb-3">Tailoring Suggestions</h4>
+            <h4 className="font-semibold text-white mb-3">Tailoring Suggestions</h4>
             <ul className="space-y-2">
               {data.tailoringAnalysis.suggestions.map((suggestion, idx) => (
-                <li key={idx} className="text-sm text-gray-700 flex items-start p-3 bg-white rounded shadow-sm">
-                  <span className="text-indigo-500 mr-2">→</span>
+                <li key={idx} className="text-sm text-gray-300 flex items-start p-3 bg-gray-900/50 border border-gray-700 rounded shadow-sm">
+                  <span className="text-indigo-400 mr-2">→</span>
                   {suggestion}
                 </li>
               ))}
@@ -793,8 +793,8 @@ function CareerAnalysisView({ data }: { data: CareerTailoringResult }) {
       </div>
 
       {/* Career Roadmap */}
-      <div className="border border-gray-200 rounded-lg p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🚀 Career Roadmap</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-gray-900/50">
+        <h3 className="text-xl font-bold text-white mb-4">🚀 Career Roadmap</h3>
         
         {/* Role Selector */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
@@ -805,7 +805,7 @@ function CareerAnalysisView({ data }: { data: CareerTailoringResult }) {
               className={`px-4 py-2 rounded-lg font-semibold whitespace-nowrap transition-all ${
                 selectedRole === idx
                   ? 'bg-green-600 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
               }`}
             >
               {role.role_name}
@@ -816,49 +816,49 @@ function CareerAnalysisView({ data }: { data: CareerTailoringResult }) {
         {/* Selected Role Details */}
         {data.careerRoadmap.target_roles[selectedRole] && (
           <div className="space-y-6">
-            <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg">
+            <div className="p-6 bg-gradient-to-br from-green-900/20 to-emerald-900/20 border border-gray-700 rounded-lg">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h4 className="text-2xl font-bold text-gray-900 mb-2">
+                  <h4 className="text-2xl font-bold text-white mb-2">
                     {data.careerRoadmap.target_roles[selectedRole].role_name}
                   </h4>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-4 text-sm text-gray-400">
                     <span>⏱️ {data.careerRoadmap.target_roles[selectedRole].timeframe}</span>
                     <span>🎯 Priority: {data.careerRoadmap.target_roles[selectedRole].priority}</span>
                   </div>
                 </div>
               </div>
               
-              <p className="text-sm text-gray-700 mb-4">{data.careerRoadmap.target_roles[selectedRole].description}</p>
-              <p className="text-sm text-gray-600 italic">{data.careerRoadmap.target_roles[selectedRole].justification}</p>
+              <p className="text-sm text-gray-300 mb-4">{data.careerRoadmap.target_roles[selectedRole].description}</p>
+              <p className="text-sm text-gray-400 italic">{data.careerRoadmap.target_roles[selectedRole].justification}</p>
             </div>
 
             {/* Metrics */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="p-4 bg-blue-50 rounded-lg text-center">
-                <div className="text-2xl font-bold text-blue-600">
+              <div className="p-4 bg-blue-900/20 rounded-lg text-center">
+                <div className="text-2xl font-bold text-blue-400">
                   {data.careerRoadmap.target_roles[selectedRole].metrics.skill_match_percentage}%
                 </div>
-                <div className="text-xs text-gray-600">Skill Match</div>
+                <div className="text-xs text-gray-400">Skill Match</div>
               </div>
-              <div className="p-4 bg-purple-50 rounded-lg text-center">
-                <div className="text-2xl font-bold text-purple-600">
+              <div className="p-4 bg-purple-900/20 rounded-lg text-center">
+                <div className="text-2xl font-bold text-purple-400">
                   {data.careerRoadmap.target_roles[selectedRole].metrics.experience_relevance_score}
                 </div>
-                <div className="text-xs text-gray-600">Experience Relevance</div>
+                <div className="text-xs text-gray-400">Experience Relevance</div>
               </div>
-              <div className="p-4 bg-green-50 rounded-lg text-center">
-                <div className="text-2xl font-bold text-green-600">
+              <div className="p-4 bg-green-900/20 rounded-lg text-center">
+                <div className="text-2xl font-bold text-green-400">
                   {data.careerRoadmap.target_roles[selectedRole].metrics.growth_potential_score}
                 </div>
-                <div className="text-xs text-gray-600">Growth Potential</div>
+                <div className="text-xs text-gray-400">Growth Potential</div>
               </div>
             </div>
 
             {/* Career Path */}
             {data.careerRoadmap.target_roles[selectedRole].career_path.length > 0 && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-3">Career Path</h4>
+              <div className="p-4 bg-gray-800/50 border border-gray-700 rounded-lg">
+                <h4 className="font-semibold text-white mb-3">Career Path</h4>
                 <div className="flex items-center gap-2 overflow-x-auto">
                   {data.careerRoadmap.target_roles[selectedRole].career_path.map((step, idx) => (
                     <div key={idx} className="flex items-center">
@@ -876,27 +876,27 @@ function CareerAnalysisView({ data }: { data: CareerTailoringResult }) {
 
             {/* Gaps */}
             <div className="grid grid-cols-3 gap-4">
-              <div className="p-4 bg-red-50 rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2 text-sm">Missing Skills</h4>
+              <div className="p-4 bg-red-900/20 rounded-lg">
+                <h4 className="font-semibold text-white mb-2 text-sm">Missing Skills</h4>
                 <ul className="space-y-1">
                   {data.careerRoadmap.target_roles[selectedRole].gaps.missing_skills.map((skill, idx) => (
-                    <li key={idx} className="text-xs text-gray-700">• {skill}</li>
+                    <li key={idx} className="text-xs text-gray-300">• {skill}</li>
                   ))}
                 </ul>
               </div>
-              <div className="p-4 bg-yellow-50 rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2 text-sm">Missing Experience</h4>
+              <div className="p-4 bg-yellow-900/20 rounded-lg">
+                <h4 className="font-semibold text-white mb-2 text-sm">Missing Experience</h4>
                 <ul className="space-y-1">
                   {data.careerRoadmap.target_roles[selectedRole].gaps.missing_experience.map((exp, idx) => (
-                    <li key={idx} className="text-xs text-gray-700">• {exp}</li>
+                    <li key={idx} className="text-xs text-gray-300">• {exp}</li>
                   ))}
                 </ul>
               </div>
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <h4 className="font-semibold text-gray-900 mb-2 text-sm">Suggested Certifications</h4>
+              <div className="p-4 bg-blue-900/20 rounded-lg">
+                <h4 className="font-semibold text-white mb-2 text-sm">Suggested Certifications</h4>
                 <ul className="space-y-1">
                   {data.careerRoadmap.target_roles[selectedRole].gaps.suggested_certifications.map((cert, idx) => (
-                    <li key={idx} className="text-xs text-gray-700">• {cert}</li>
+                    <li key={idx} className="text-xs text-gray-300">• {cert}</li>
                   ))}
                 </ul>
               </div>
@@ -905,21 +905,21 @@ function CareerAnalysisView({ data }: { data: CareerTailoringResult }) {
             {/* Goals */}
             {data.careerRoadmap.target_roles[selectedRole].goals.length > 0 && (
               <div>
-                <h4 className="font-semibold text-gray-900 mb-3">Action Goals</h4>
+                <h4 className="font-semibold text-white mb-3">Action Goals</h4>
                 <div className="space-y-2">
                   {data.careerRoadmap.target_roles[selectedRole].goals.map((goal, idx) => (
-                    <div key={idx} className="p-4 bg-white border border-gray-200 rounded-lg">
+                    <div key={idx} className="p-4 bg-gray-900/50 border border-gray-700 border border-gray-700 rounded-lg">
                       <div className="flex items-start justify-between mb-2">
-                        <h5 className="font-semibold text-gray-900">{goal.title}</h5>
+                        <h5 className="font-semibold text-white">{goal.title}</h5>
                         <span className={`text-xs px-2 py-1 rounded font-semibold ${
                           goal.status === 'completed' ? 'bg-green-100 text-green-700' :
                           goal.status === 'in_progress' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-gray-100 text-gray-700'
+                          'bg-gray-800 text-gray-300'
                         }`}>
                           {goal.status.replace('_', ' ')}
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 text-xs text-gray-600">
+                      <div className="flex items-center gap-4 text-xs text-gray-400">
                         <span>📁 {goal.category.replace('_', ' ')}</span>
                         <span>💪 Impact: {goal.impact_score}/100</span>
                         <span>📅 {goal.deadline}</span>
@@ -935,9 +935,9 @@ function CareerAnalysisView({ data }: { data: CareerTailoringResult }) {
       </div>
 
       {/* Life Integration */}
-      <div className="p-6 bg-gradient-to-br from-pink-50 to-purple-50 rounded-lg border border-gray-200">
-        <h3 className="text-lg font-bold text-gray-900 mb-3">🌟 Life Integration</h3>
-        <p className="text-sm text-gray-700">{data.careerRoadmap.life_integration}</p>
+      <div className="p-6 bg-gradient-to-br from-pink-900/20 to-purple-900/20 rounded-lg border border-gray-700">
+        <h3 className="text-lg font-bold text-white mb-3">🌟 Life Integration</h3>
+        <p className="text-sm text-gray-300">{data.careerRoadmap.life_integration}</p>
       </div>
     </div>
   );
@@ -947,49 +947,49 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Deep Insights & Analysis</h2>
-        <p className="text-gray-600">Psychological profile, industry fit, and cultural alignment</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Deep Insights & Analysis</h2>
+        <p className="text-gray-400">Psychological profile, industry fit, and cultural alignment</p>
       </div>
 
       {/* Psychological Insights */}
-      <div className="border border-gray-200 rounded-lg p-6 bg-gradient-to-br from-purple-50 to-pink-50">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🧠 Psychological Profile</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-gradient-to-br from-purple-900/20 to-pink-900/20">
+        <h3 className="text-xl font-bold text-white mb-4">🧠 Psychological Profile</h3>
         
         {/* Work Style */}
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Work Style Preferences</h4>
+          <h4 className="font-semibold text-white mb-3">Work Style Preferences</h4>
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Team Orientation</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Team Orientation</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.workStylePreferences.team_orientation}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.psychologicalInsights.workStylePreferences.team_orientation}</span>
               </div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Structure Preference</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Structure Preference</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.workStylePreferences.structure_preference}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.psychologicalInsights.workStylePreferences.structure_preference}</span>
               </div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Risk Tolerance</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Risk Tolerance</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.workStylePreferences.risk_tolerance}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.psychologicalInsights.workStylePreferences.risk_tolerance}</span>
               </div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Work Pace</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Work Pace</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.workStylePreferences.work_pace}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.psychologicalInsights.workStylePreferences.work_pace}</span>
@@ -997,47 +997,47 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-3">
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600">Feedback Style</div>
-              <div className="text-sm font-semibold text-gray-900">{data.psychologicalInsights.workStylePreferences.feedback_style}</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400">Feedback Style</div>
+              <div className="text-sm font-semibold text-white">{data.psychologicalInsights.workStylePreferences.feedback_style}</div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600">Decision Making</div>
-              <div className="text-sm font-semibold text-gray-900">{data.psychologicalInsights.workStylePreferences.decision_making}</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400">Decision Making</div>
+              <div className="text-sm font-semibold text-white">{data.psychologicalInsights.workStylePreferences.decision_making}</div>
             </div>
           </div>
         </div>
 
         {/* Communication Style */}
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Communication Style</h4>
+          <h4 className="font-semibold text-white mb-3">Communication Style</h4>
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-3 bg-white rounded-lg col-span-2">
-              <div className="text-xs text-gray-600">Primary Style</div>
-              <div className="text-lg font-semibold text-purple-600">{data.psychologicalInsights.communicationStyle.primary_style}</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg col-span-2">
+              <div className="text-xs text-gray-400">Primary Style</div>
+              <div className="text-lg font-semibold text-purple-400">{data.psychologicalInsights.communicationStyle.primary_style}</div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Formality Level</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Formality Level</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-pink-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.communicationStyle.formality_level}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.psychologicalInsights.communicationStyle.formality_level}</span>
               </div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Detail Orientation</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Detail Orientation</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-pink-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.communicationStyle.detail_orientation}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.psychologicalInsights.communicationStyle.detail_orientation}</span>
               </div>
             </div>
-            <div className="p-3 bg-white rounded-lg col-span-2">
-              <div className="text-xs text-gray-600 mb-1">Assertiveness</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg col-span-2">
+              <div className="text-xs text-gray-400 mb-1">Assertiveness</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-pink-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.communicationStyle.assertiveness}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.psychologicalInsights.communicationStyle.assertiveness}</span>
@@ -1048,15 +1048,15 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
 
         {/* Motivational Drivers */}
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Motivational Drivers</h4>
+          <h4 className="font-semibold text-white mb-3">Motivational Drivers</h4>
           <div className="space-y-2">
             {data.psychologicalInsights.motivationalDrivers.map((driver, idx) => (
-              <div key={idx} className="p-3 bg-white rounded-lg">
+              <div key={idx} className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-gray-900">{driver.driver}</span>
-                  <span className="text-sm font-bold text-purple-600">{driver.strength}/100</span>
+                  <span className="font-semibold text-white">{driver.driver}</span>
+                  <span className="text-sm font-bold text-purple-400">{driver.strength}/100</span>
                 </div>
-                <p className="text-xs text-gray-600">{driver.evidence}</p>
+                <p className="text-xs text-gray-400">{driver.evidence}</p>
               </div>
             ))}
           </div>
@@ -1064,35 +1064,35 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
 
         {/* Learning Style */}
         <div>
-          <h4 className="font-semibold text-gray-900 mb-3">Learning Style</h4>
+          <h4 className="font-semibold text-white mb-3">Learning Style</h4>
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-3 bg-white rounded-lg col-span-2">
-              <div className="text-xs text-gray-600">Primary Style</div>
-              <div className="text-lg font-semibold text-purple-600">{data.psychologicalInsights.learningStyle.primary_style}</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg col-span-2">
+              <div className="text-xs text-gray-400">Primary Style</div>
+              <div className="text-lg font-semibold text-purple-400">{data.psychologicalInsights.learningStyle.primary_style}</div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Learning Velocity</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Learning Velocity</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.learningStyle.learning_velocity}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.psychologicalInsights.learningStyle.learning_velocity}</span>
               </div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Adaptability</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Adaptability</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.learningStyle.adaptability}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.psychologicalInsights.learningStyle.adaptability}</span>
               </div>
             </div>
-            <div className="p-3 bg-white rounded-lg col-span-2">
-              <div className="text-xs text-gray-600 mb-1">Knowledge: Depth vs Breadth</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg col-span-2">
+              <div className="text-xs text-gray-400 mb-1">Knowledge: Depth vs Breadth</div>
               <div className="flex items-center gap-2">
                 <span className="text-xs">Depth</span>
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-purple-600 h-2 rounded-full" style={{ width: `${data.psychologicalInsights.learningStyle.knowledge_depth_vs_breadth}%` }}></div>
                 </div>
                 <span className="text-xs">Breadth</span>
@@ -1103,17 +1103,17 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
       </div>
 
       {/* Industry Analysis */}
-      <div className="border border-gray-200 rounded-lg p-6 bg-gradient-to-br from-blue-50 to-cyan-50">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🏢 Industry Analysis</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-gradient-to-br from-blue-900/20 to-cyan-900/20">
+        <h3 className="text-xl font-bold text-white mb-4">🏢 Industry Analysis</h3>
         
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Industry Alignment</h4>
-          <div className="p-4 bg-white rounded-lg mb-3">
-            <div className="text-xs text-gray-600">Primary Industry</div>
-            <div className="text-xl font-bold text-blue-600">{data.industryAnalysis.industryAlignment.primary_industry}</div>
+          <h4 className="font-semibold text-white mb-3">Industry Alignment</h4>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg mb-3">
+            <div className="text-xs text-gray-400">Primary Industry</div>
+            <div className="text-xl font-bold text-blue-400">{data.industryAnalysis.industryAlignment.primary_industry}</div>
           </div>
-          <div className="p-4 bg-white rounded-lg mb-3">
-            <div className="text-xs text-gray-600 mb-2">Secondary Industries</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg mb-3">
+            <div className="text-xs text-gray-400 mb-2">Secondary Industries</div>
             <div className="flex flex-wrap gap-2">
               {data.industryAnalysis.industryAlignment.secondary_industries.map((industry, idx) => (
                 <span key={idx} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
@@ -1122,16 +1122,16 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
               ))}
             </div>
           </div>
-          <div className="p-4 bg-white rounded-lg mb-3">
-            <div className="text-xs text-gray-600">Industry Trajectory</div>
-            <div className="text-lg font-semibold text-gray-900">{data.industryAnalysis.industryAlignment.industry_trajectory}</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg mb-3">
+            <div className="text-xs text-gray-400">Industry Trajectory</div>
+            <div className="text-lg font-semibold text-white">{data.industryAnalysis.industryAlignment.industry_trajectory}</div>
           </div>
-          <div className="p-4 bg-white rounded-lg">
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs text-gray-600">Trends Alignment</div>
-              <span className="text-xl font-bold text-blue-600">{data.industryAnalysis.industryAlignment.industry_trends_alignment.score}/100</span>
+              <div className="text-xs text-gray-400">Trends Alignment</div>
+              <span className="text-xl font-bold text-blue-400">{data.industryAnalysis.industryAlignment.industry_trends_alignment.score}/100</span>
             </div>
-            <p className="text-xs text-gray-600 mb-2">{data.industryAnalysis.industryAlignment.industry_trends_alignment.reason}</p>
+            <p className="text-xs text-gray-400 mb-2">{data.industryAnalysis.industryAlignment.industry_trends_alignment.reason}</p>
             <div className="flex flex-wrap gap-2">
               {data.industryAnalysis.industryAlignment.industry_trends_alignment.trends.map((trend, idx) => (
                 <span key={idx} className="px-2 py-1 bg-cyan-100 text-cyan-700 rounded text-xs">
@@ -1143,22 +1143,22 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
         </div>
 
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Competitive Position</h4>
+          <h4 className="font-semibold text-white mb-3">Competitive Position</h4>
           <div className="grid grid-cols-2 gap-4 mb-3">
-            <div className="p-3 bg-white rounded-lg text-center">
-              <div className="text-2xl font-bold text-blue-600">{data.industryAnalysis.competitivePosition.industry_specific_skills_score}</div>
-              <div className="text-xs text-gray-600">Industry Skills</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg text-center">
+              <div className="text-2xl font-bold text-blue-400">{data.industryAnalysis.competitivePosition.industry_specific_skills_score}</div>
+              <div className="text-xs text-gray-400">Industry Skills</div>
             </div>
-            <div className="p-3 bg-white rounded-lg text-center">
-              <div className="text-2xl font-bold text-blue-600">{data.industryAnalysis.competitivePosition.experience_depth_score}</div>
-              <div className="text-xs text-gray-600">Experience Depth</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg text-center">
+              <div className="text-2xl font-bold text-blue-400">{data.industryAnalysis.competitivePosition.experience_depth_score}</div>
+              <div className="text-xs text-gray-400">Experience Depth</div>
             </div>
           </div>
-          <div className="p-4 bg-white rounded-lg">
-            <div className="text-xs text-gray-600 mb-2">Unique Selling Points</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
+            <div className="text-xs text-gray-400 mb-2">Unique Selling Points</div>
             <ul className="space-y-1">
               {data.industryAnalysis.competitivePosition.unique_selling_points.map((point, idx) => (
-                <li key={idx} className="text-sm text-gray-700 flex items-start">
+                <li key={idx} className="text-sm text-gray-300 flex items-start">
                   <span className="text-blue-500 mr-2">✓</span>
                   {point}
                 </li>
@@ -1168,17 +1168,17 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
         </div>
 
         <div>
-          <h4 className="font-semibold text-gray-900 mb-3">Industry-Specific Suggestions</h4>
+          <h4 className="font-semibold text-white mb-3">Industry-Specific Suggestions</h4>
           <div className="space-y-2">
             {data.industryAnalysis.industrySpecificSuggestions.map((suggestion, idx) => (
-              <div key={idx} className="p-3 bg-white rounded-lg">
+              <div key={idx} className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
                 <div className="flex items-start justify-between mb-1">
-                  <span className="text-sm text-gray-900">{suggestion.suggestion}</span>
+                  <span className="text-sm text-white">{suggestion.suggestion}</span>
                   <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded font-semibold ml-2">
                     {suggestion.timeframe}
                   </span>
                 </div>
-                <div className="text-xs text-gray-600">Impact: {suggestion.impact}/100</div>
+                <div className="text-xs text-gray-400">Impact: {suggestion.impact}/100</div>
               </div>
             ))}
           </div>
@@ -1186,34 +1186,34 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
       </div>
 
       {/* Cultural Fit */}
-      <div className="border border-gray-200 rounded-lg p-6 bg-gradient-to-br from-green-50 to-emerald-50">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🌍 Cultural Fit Assessment</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-gradient-to-br from-green-900/20 to-emerald-900/20">
+        <h3 className="text-xl font-bold text-white mb-4">🌍 Cultural Fit Assessment</h3>
         
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Work Values</h4>
+          <h4 className="font-semibold text-white mb-3">Work Values</h4>
           <div className="space-y-2">
             {data.culturalFitAssessment.workValues.map((value, idx) => (
-              <div key={idx} className="p-3 bg-white rounded-lg">
+              <div key={idx} className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-gray-900">{value.value}</span>
-                  <span className="text-sm font-bold text-green-600">{value.strength}/100</span>
+                  <span className="font-semibold text-white">{value.value}</span>
+                  <span className="text-sm font-bold text-green-400">{value.strength}/100</span>
                 </div>
-                <p className="text-xs text-gray-600">{value.evidence}</p>
+                <p className="text-xs text-gray-400">{value.evidence}</p>
               </div>
             ))}
           </div>
         </div>
 
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Organization Type Alignment</h4>
+          <h4 className="font-semibold text-white mb-3">Organization Type Alignment</h4>
           <div className="space-y-2">
             {Object.entries(data.culturalFitAssessment.organizationTypeAlignment).map(([type, score]) => (
-              <div key={type} className="p-3 bg-white rounded-lg">
+              <div key={type} className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium text-gray-900 capitalize">{type.replace('_', ' ')}</span>
-                  <span className="text-sm font-bold text-green-600">{score}/100</span>
+                  <span className="text-sm font-medium text-white capitalize">{type.replace('_', ' ')}</span>
+                  <span className="text-sm font-bold text-green-400">{score}/100</span>
                 </div>
-                <div className="bg-gray-200 rounded-full h-2">
+                <div className="bg-gray-700 rounded-full h-2">
                   <div className="bg-green-600 h-2 rounded-full" style={{ width: `${score}%` }}></div>
                 </div>
               </div>
@@ -1222,51 +1222,51 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-4 bg-white rounded-lg">
-            <div className="text-xs text-gray-600 mb-1">Leadership Style Preference</div>
-            <div className="text-lg font-semibold text-green-600">{data.culturalFitAssessment.leadershipStylePreference}</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
+            <div className="text-xs text-gray-400 mb-1">Leadership Style Preference</div>
+            <div className="text-lg font-semibold text-green-400">{data.culturalFitAssessment.leadershipStylePreference}</div>
           </div>
-          <div className="p-4 bg-white rounded-lg">
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <div className="text-xs text-gray-600">Cultural Adaptability</div>
-              <span className="text-lg font-bold text-green-600">{data.culturalFitAssessment.culturalAdaptability.score}/100</span>
+              <div className="text-xs text-gray-400">Cultural Adaptability</div>
+              <span className="text-lg font-bold text-green-400">{data.culturalFitAssessment.culturalAdaptability.score}/100</span>
             </div>
-            <p className="text-xs text-gray-600">{data.culturalFitAssessment.culturalAdaptability.reason}</p>
+            <p className="text-xs text-gray-400">{data.culturalFitAssessment.culturalAdaptability.reason}</p>
           </div>
         </div>
       </div>
 
       {/* Learning & Development */}
-      <div className="border border-gray-200 rounded-lg p-6 bg-gradient-to-br from-yellow-50 to-orange-50">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">📚 Learning & Development Profile</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-gradient-to-br from-yellow-900/20 to-orange-900/20">
+        <h3 className="text-xl font-bold text-white mb-4">📚 Learning & Development Profile</h3>
         
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="p-4 bg-white rounded-lg">
-            <div className="text-xs text-gray-600 mb-1">Education Pattern</div>
-            <div className="text-sm font-semibold text-gray-900">{data.learningAndDevelopmentProfile.formalEducationPattern}</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
+            <div className="text-xs text-gray-400 mb-1">Education Pattern</div>
+            <div className="text-sm font-semibold text-white">{data.learningAndDevelopmentProfile.formalEducationPattern}</div>
           </div>
-          <div className="p-4 bg-white rounded-lg text-center">
-            <div className="text-2xl font-bold text-yellow-600">{data.learningAndDevelopmentProfile.skillAcquisitionSpeed}</div>
-            <div className="text-xs text-gray-600">Skill Acquisition Speed</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg text-center">
+            <div className="text-2xl font-bold text-yellow-400">{data.learningAndDevelopmentProfile.skillAcquisitionSpeed}</div>
+            <div className="text-xs text-gray-400">Skill Acquisition Speed</div>
           </div>
-          <div className="p-4 bg-white rounded-lg text-center">
-            <div className="text-2xl font-bold text-yellow-600">{data.learningAndDevelopmentProfile.continuousLearningIndicators}</div>
-            <div className="text-xs text-gray-600">Learning Indicators</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg text-center">
+            <div className="text-2xl font-bold text-yellow-400">{data.learningAndDevelopmentProfile.continuousLearningIndicators}</div>
+            <div className="text-xs text-gray-400">Learning Indicators</div>
           </div>
         </div>
 
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Knowledge Gaps</h4>
+          <h4 className="font-semibold text-white mb-3">Knowledge Gaps</h4>
           <div className="space-y-2">
             {data.learningAndDevelopmentProfile.knowledgeGaps.map((gap, idx) => (
-              <div key={idx} className="p-3 bg-white rounded-lg">
+              <div key={idx} className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-gray-900">{gap.area}</span>
+                  <span className="font-semibold text-white">{gap.area}</span>
                   <span className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded font-semibold">
                     Criticality: {gap.criticality}/100
                   </span>
                 </div>
-                <div className="text-xs text-gray-600 mb-1">Suggested Resources:</div>
+                <div className="text-xs text-gray-400 mb-1">Suggested Resources:</div>
                 <div className="flex flex-wrap gap-1">
                   {gap.suggested_resources.map((resource, rIdx) => (
                     <span key={rIdx} className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">
@@ -1280,78 +1280,78 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
         </div>
 
         <div>
-          <h4 className="font-semibold text-gray-900 mb-3">Mentorship Potential</h4>
+          <h4 className="font-semibold text-white mb-3">Mentorship Potential</h4>
           <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-white rounded-lg text-center">
+            <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg text-center">
               <div className="text-2xl font-bold text-orange-600">{data.learningAndDevelopmentProfile.mentorshipPotential.as_mentor}</div>
-              <div className="text-xs text-gray-600">As Mentor</div>
+              <div className="text-xs text-gray-400">As Mentor</div>
             </div>
-            <div className="p-4 bg-white rounded-lg text-center">
+            <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg text-center">
               <div className="text-2xl font-bold text-orange-600">{data.learningAndDevelopmentProfile.mentorshipPotential.as_mentee}</div>
-              <div className="text-xs text-gray-600">As Mentee</div>
+              <div className="text-xs text-gray-400">As Mentee</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Network Analysis */}
-      <div className="border border-gray-200 rounded-lg p-6 bg-gradient-to-br from-indigo-50 to-purple-50">
-        <h3 className="text-xl font-bold text-gray-900 mb-4">🤝 Network Analysis</h3>
+      <div className="border border-gray-700 rounded-lg p-6 bg-gradient-to-br from-indigo-900/20 to-purple-900/20">
+        <h3 className="text-xl font-bold text-white mb-4">🤝 Network Analysis</h3>
         
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Collaboration Patterns</h4>
+          <h4 className="font-semibold text-white mb-3">Collaboration Patterns</h4>
           <div className="grid grid-cols-2 gap-4 mb-3">
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Cross-Functional</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Cross-Functional</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-indigo-600 h-2 rounded-full" style={{ width: `${data.networkAnalysis.collaborationPatterns.cross_functional}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.networkAnalysis.collaborationPatterns.cross_functional}</span>
               </div>
             </div>
-            <div className="p-3 bg-white rounded-lg">
-              <div className="text-xs text-gray-600 mb-1">Leadership</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
+              <div className="text-xs text-gray-400 mb-1">Leadership</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-indigo-600 h-2 rounded-full" style={{ width: `${data.networkAnalysis.collaborationPatterns.leadership}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.networkAnalysis.collaborationPatterns.leadership}</span>
               </div>
             </div>
-            <div className="p-3 bg-white rounded-lg col-span-2">
-              <div className="text-xs text-gray-600 mb-1">Individual Contribution</div>
+            <div className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg col-span-2">
+              <div className="text-xs text-gray-400 mb-1">Individual Contribution</div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <div className="flex-1 bg-gray-700 rounded-full h-2">
                   <div className="bg-indigo-600 h-2 rounded-full" style={{ width: `${data.networkAnalysis.collaborationPatterns.individual_contribution}%` }}></div>
                 </div>
                 <span className="text-sm font-bold">{data.networkAnalysis.collaborationPatterns.individual_contribution}</span>
               </div>
             </div>
           </div>
-          <div className="p-4 bg-white rounded-lg">
-            <div className="text-xs text-gray-600">Primary Mode</div>
-            <div className="text-lg font-semibold text-indigo-600">{data.networkAnalysis.collaborationPatterns.primary_mode}</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
+            <div className="text-xs text-gray-400">Primary Mode</div>
+            <div className="text-lg font-semibold text-indigo-400">{data.networkAnalysis.collaborationPatterns.primary_mode}</div>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="p-4 bg-white rounded-lg text-center">
-            <div className="text-2xl font-bold text-indigo-600">{data.networkAnalysis.industryConnectivity}</div>
-            <div className="text-xs text-gray-600">Industry Connectivity</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg text-center">
+            <div className="text-2xl font-bold text-indigo-400">{data.networkAnalysis.industryConnectivity}</div>
+            <div className="text-xs text-gray-400">Industry Connectivity</div>
           </div>
-          <div className="p-4 bg-white rounded-lg text-center">
-            <div className="text-2xl font-bold text-indigo-600">{data.networkAnalysis.networkDiversity}</div>
-            <div className="text-xs text-gray-600">Network Diversity</div>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg text-center">
+            <div className="text-2xl font-bold text-indigo-400">{data.networkAnalysis.networkDiversity}</div>
+            <div className="text-xs text-gray-400">Network Diversity</div>
           </div>
         </div>
 
         <div className="mb-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Network Strengths</h4>
-          <div className="p-4 bg-white rounded-lg">
+          <h4 className="font-semibold text-white mb-3">Network Strengths</h4>
+          <div className="p-4 bg-gray-900/50 border border-gray-700 rounded-lg">
             <ul className="space-y-1">
               {data.networkAnalysis.networkStrengths.map((strength, idx) => (
-                <li key={idx} className="text-sm text-gray-700 flex items-start">
+                <li key={idx} className="text-sm text-gray-300 flex items-start">
                   <span className="text-indigo-500 mr-2">✓</span>
                   {strength}
                 </li>
@@ -1361,17 +1361,17 @@ function InsightsAnalysisView({ data }: { data: DeepInsightsResult }) {
         </div>
 
         <div>
-          <h4 className="font-semibold text-gray-900 mb-3">Network Growth Strategies</h4>
+          <h4 className="font-semibold text-white mb-3">Network Growth Strategies</h4>
           <div className="space-y-2">
             {data.networkAnalysis.networkGrowthStrategies.map((strategy, idx) => (
-              <div key={idx} className="p-3 bg-white rounded-lg">
+              <div key={idx} className="p-3 bg-gray-900/50 border border-gray-700 rounded-lg">
                 <div className="flex items-start justify-between mb-1">
-                  <span className="text-sm text-gray-900">{strategy.strategy}</span>
+                  <span className="text-sm text-white">{strategy.strategy}</span>
                   <span className="text-xs px-2 py-1 bg-indigo-100 text-indigo-700 rounded font-semibold ml-2">
                     {strategy.timeframe}
                   </span>
                 </div>
-                <div className="text-xs text-gray-600">Impact: {strategy.impact}/100</div>
+                <div className="text-xs text-gray-400">Impact: {strategy.impact}/100</div>
               </div>
             ))}
           </div>
