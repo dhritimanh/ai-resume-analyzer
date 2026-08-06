@@ -57,6 +57,12 @@ export interface CareerTailoringResult {
     feedback: string;
     suggestions: string[];
   };
+  // Career narrative analysis (new)
+  careerNarrative?: {
+    progression: string;
+    summaryAlignment: 'good' | 'partial' | 'poor';
+    suggestion?: string;
+  };
 }
 
 export async function runCareerTailoringAnalysis(
@@ -99,10 +105,11 @@ Metrics (all 0-100):
 - growth_potential_score: Industry demand + skill transferability
   High growth (>80), Moderate (60-80), Limited (<60)
 
-Gaps Analysis:
-- missing_skills: Technical/soft skills needed but not present
-- missing_experience: Types of experience needed (e.g., "team leadership")
-- suggested_certifications: Industry-recognized certs for role
+Gaps Analysis (ONLY if job description provided):
+- missing_skills: Skills in job description but not in resume
+- missing_experience: Experience types in job description but not in resume
+- suggested_certifications: Certs mentioned in job description or directly related to role
+- If NO job description: leave gaps arrays EMPTY or focus on natural progression gaps from their career trajectory
 
 Goals (3-5 per role):
 - Link to resume gaps (e.g., "Learn Python" if missing)
@@ -117,9 +124,14 @@ Tailoring Metrics (all 0-100):
 - skill_alignment_score: (resume skills / job skills) × 100
 - experience_relevance_score: (relevant bullets / total bullets) × 100
 
-Industry Benchmarks:
-- Reference typical scores for job target when available
-- Example: "Average skill match for Product Managers is 72"`;
+CRITICAL: Base all analysis ONLY on resume content. Never reference:
+- Industry averages, benchmarks, or "typical" scores
+- Salary figures or compensation ranges
+- Job market trends, demand, or growth percentages
+- Prescriptive role recommendations ("your next role should be X")
+- External data not present in the resume
+
+Instead, provide observable patterns from THEIR resume (e.g., "You've progressed one level every 2.1 years" not "typical career path is X").`;
 
   // User message: Analysis request
   const prompt = `Analyze career roadmap and tailoring for job target: "${inferredJobTarget}"
@@ -132,7 +144,7 @@ Return ONLY this JSON:
       "role_name": "specific role title",
       "timeframe": "0-1 yr | 1-3 yr | 3-5+ yr",
       "description": "1-2 sentences on role responsibilities",
-      "justification": "1-2 sentences why this fits resume",
+      "justification": "Based on your progression (Associate → PM → Senior → Lead every 2.1 yrs), you have demonstrated upward mobility. Your scope has grown from 0 to 12 team members and $200K to $2M budget, suggesting readiness for expanded responsibility.",
       "priority": 1-10,
       "career_path": ["current role → next role → future role"],
       "metrics": {
@@ -166,18 +178,28 @@ Return ONLY this JSON:
     },
     "feedback": "1-2 sentences overall tailoring assessment",
     "suggestions": ["specific actionable suggestion (max 4)"]
+  },
+  "careerNarrative": {
+    "progression": "Your resume shows clear progression: Scope (solo contributor → 12-person teams), Budget ($0 → $2M), Impact (local features → company-wide platforms), Stakeholders (team leads → C-suite)",
+    "summaryAlignment": "good | partial | poor",
+    "suggestion": "Consider rewriting Summary to mirror this progression (e.g., 'Scaling from IC to leadership, growing scope from $200K to $2M budgets')"
   }
 }
 
 INSTRUCTIONS:
-- Suggest 2-6 roles based on career stage (inferred from years of experience)
-- Provide career paths showing progression
-- Score all metrics (0-100) with industry benchmarks
-- Identify specific gaps (skills, experience, certs)
-- Link 3-5 goals per role to resume gaps
+- Suggest 2-6 roles based on career stage (inferred from years of experience in resume)
+- Provide career paths showing progression based on their documented trajectory
+- Identify gaps ONLY if job description provided; otherwise focus on strengths
+- Link 3-5 goals per role to resume gaps or natural next steps from their progression
 - Set realistic deadlines (3-12 months)
 - Provide 4 tailoring suggestions max
 - Use job description if provided, otherwise use job target
+- In justification field, cite THEIR progression pattern (e.g., "every 2.1 years", "scope grew from X to Y")
+
+CAREER NARRATIVE (new):
+- Analyze progression pattern from Experience section (scope, budget, impact, stakeholders)
+- Compare to Summary section - does Summary reflect this growth?
+- Suggest rewriting Summary if it doesn't mirror the progression
 
 Resume:
 ${resumeContent}`;

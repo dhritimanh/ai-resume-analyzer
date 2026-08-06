@@ -27,6 +27,12 @@ export interface QuickAnalysisResult {
   inferredJobTarget: string;
   keyStrengths: string[];
   topIssues: string[];
+  // Maximum value suggestion
+  bestBulletTemplate?: {
+    bullet: string;
+    structure: string;
+    applyTo: string;
+  };
 }
 
 export async function runQuickAnalysis(resumeContent: string): Promise<QuickAnalysisResult> {
@@ -52,7 +58,7 @@ PAID TIER STRATEGY: Deliver COMPLETE value - give exact rewrites, specific numbe
 SCORING RUBRIC (deterministic: same input = same score ±2):
 
 ATS Score (0-100):
-- Keywords: Industry-relevant terms (15+ = 100, 10-14 = 85, 5-9 = 70, <5 = 40)
+- Keywords: Job-relevant terms found in resume (15+ = 100, 10-14 = 85, 5-9 = 70, <5 = 40)
 - Quantification: % bullets with numbers (>60% = 100, 40-60% = 80, 20-40% = 60, <20% = 40)
 - Structure: Standard section names (all standard = 100, mostly = 80, mixed = 60, confusing = 40)
 - Format: ATS-friendly (no tables/columns = 100, minor issues = 80, complex = 50)
@@ -80,7 +86,7 @@ Overall Score: ATS×0.4 + Clarity×0.3 + Impact×0.3`;
 {
   "scores": {"overall": 0-100, "ats": 0-100, "clarity": 0-100, "impact": 0-100},
   "metrics": {
-    "keywordCount": number (industry-relevant keywords found),
+    "keywordCount": number (job-relevant keywords found in resume),
     "quantificationRate": number (% of bullets with numbers, 0-100),
     "strongVerbRate": number (% of bullets with strong action verbs, 0-100),
     "avgBulletLength": number (average words per bullet),
@@ -91,7 +97,12 @@ Overall Score: ATS×0.4 + Clarity×0.3 + Impact×0.3`;
   ],
   "inferredJobTarget": "[Seniority] [Role] (e.g., Senior Software Engineer)",
   "keyStrengths": ["strength with evidence", "strength 2", "strength 3"],
-  "topIssues": ["issue with location/count", "issue 2", "issue 3"]
+  "topIssues": ["issue with location/count", "issue 2", "issue 3"],
+  "bestBulletTemplate": {
+    "bullet": "exact text of their strongest bullet",
+    "structure": "[Verb] [scope] to [achievement], [metric] ([context]) in [timeline]",
+    "applyTo": "Apply this structure to weaker bullets like: 'Worked on improving user retention' or 'Managed product roadmap'"
+  }
 }
 
 QUICK WINS (exactly 4-5, High priority first):
@@ -115,6 +126,11 @@ KEY STRENGTHS (exactly 3, with evidence):
 TOP ISSUES (exactly 3, with location/count):
 - Be precise: "No metrics in Experience bullets 1, 3, 5, 7 (4 out of 10 bullets)"
 - Quantify: "Weak verbs: 'was responsible for' (3×), 'helped with' (2×), 'worked on' (4×)"
+
+BEST BULLET TEMPLATE (new):
+- Find their STRONGEST bullet (most complete: verb + scope + achievement + metric + context + timeline)
+- Show WHY it works (break down the structure)
+- Suggest applying this structure to 1-2 weaker bullets
 
 JOB TARGET: Infer from last 2 titles + skills + years. Format: "[Seniority] [Role]" (e.g., "Senior Product Manager", "Mid-Level Software Engineer")
 

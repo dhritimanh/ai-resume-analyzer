@@ -341,6 +341,32 @@ function QuickAnalysisView({ data }: { data: QuickAnalysisResult }) {
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-white">Quick Analysis</h2>
       
+      {/* Maximum Value Suggestions */}
+      {data.bestBulletTemplate && (
+        <div className="border border-emerald-500/30 bg-emerald-900/10 rounded-lg p-6">
+          <h3 className="text-emerald-400 font-semibold mb-3 flex items-center gap-2">
+            <span>🎯</span>
+            <span>Your Strongest Bullet (Use This Template!)</span>
+          </h3>
+          
+          <div className="bg-gray-800/50 border border-gray-700 rounded p-4 mb-4">
+            <p className="text-gray-200 italic">"{data.bestBulletTemplate.bullet}"</p>
+          </div>
+
+          <div className="bg-gray-900/50 border border-purple-500/30 rounded p-4 mb-4">
+            <p className="text-xs text-gray-500 mb-2">Reusable Template:</p>
+            <code className="text-purple-300 text-sm font-mono break-words">
+              {data.bestBulletTemplate.structure}
+            </code>
+          </div>
+
+          <div className="text-sm text-gray-400">
+            <p className="font-medium text-gray-300 mb-2">Apply this structure to:</p>
+            <p>{data.bestBulletTemplate.applyTo}</p>
+          </div>
+        </div>
+      )}
+      
       {/* Quick Wins */}
       <div>
         <h3 className="text-lg font-semibold text-gray-200 mb-3">Quick Wins</h3>
@@ -354,7 +380,9 @@ function QuickAnalysisView({ data }: { data: QuickAnalysisResult }) {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="text-sm font-medium text-gray-200">{win.text}</div>
-                  <div className="text-xs text-gray-400 mt-1">Section: {win.section}</div>
+                  <div className="text-xs text-gray-400 mt-1">
+                    Section: {typeof win.section === 'string' ? win.section : JSON.stringify(win.section)}
+                  </div>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded font-semibold ${
                   win.priority === 'High' ? 'bg-red-900/40 text-red-300' :
@@ -377,7 +405,7 @@ function QuickAnalysisView({ data }: { data: QuickAnalysisResult }) {
             {data.keyStrengths.map((strength, idx) => (
               <li key={idx} className="text-sm text-gray-300 flex items-start">
                 <span className="text-green-400 mr-2">✓</span>
-                {strength}
+                {typeof strength === 'string' ? strength : JSON.stringify(strength)}
               </li>
             ))}
           </ul>
@@ -388,7 +416,7 @@ function QuickAnalysisView({ data }: { data: QuickAnalysisResult }) {
             {data.topIssues.map((issue, idx) => (
               <li key={idx} className="text-sm text-gray-300 flex items-start">
                 <span className="text-red-400 mr-2">✗</span>
-                {issue}
+                {typeof issue === 'string' ? issue : JSON.stringify(issue)}
               </li>
             ))}
           </ul>
@@ -405,6 +433,150 @@ function SectionAnalysisView({ data }: { data: SectionAnalysisResult }) {
         <h2 className="text-2xl font-bold text-white mb-2">Section-by-Section Analysis</h2>
         <p className="text-gray-400">Detailed breakdown of each resume section</p>
       </div>
+
+      {/* Maximum Value Suggestions */}
+      {(data.bestBulletTemplate || data.skillExperienceAlignment || data.careerNarrative) && (
+        <div className="space-y-6">
+          <h3 className="text-xl font-bold text-white flex items-center gap-2">
+            <span>✨</span>
+            <span>Maximum Value Insights</span>
+          </h3>
+
+          {/* Best Bullet Template */}
+          {data.bestBulletTemplate && (
+            <div className="border border-emerald-500/30 bg-emerald-900/10 rounded-lg p-6">
+              <h4 className="text-emerald-400 font-semibold mb-3 flex items-center gap-2">
+                <span>🎯</span>
+                <span>Your Strongest Bullet (Use This Template!)</span>
+              </h4>
+              
+              <div className="bg-gray-800/50 border border-gray-700 rounded p-4 mb-4">
+                <p className="text-gray-200 italic">"{data.bestBulletTemplate.bullet}"</p>
+              </div>
+
+              {data.bestBulletTemplate.why && (
+                <div className="text-sm text-gray-300 mb-4 space-y-1">
+                  {data.bestBulletTemplate.why.split('✓').filter(Boolean).map((item, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <span className="text-emerald-400 mt-0.5">✓</span>
+                      <span>{item.trim()}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="bg-gray-900/50 border border-purple-500/30 rounded p-4 mb-4">
+                <p className="text-xs text-gray-500 mb-2">Reusable Template:</p>
+                <code className="text-purple-300 text-sm font-mono break-words">
+                  {data.bestBulletTemplate.structure}
+                </code>
+              </div>
+
+              <div className="text-sm text-gray-400">
+                <p className="font-medium text-gray-300 mb-2">Apply this structure to:</p>
+                {Array.isArray(data.bestBulletTemplate.applyTo) ? (
+                  <ul className="list-disc list-inside space-y-1">
+                    {data.bestBulletTemplate.applyTo.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>{data.bestBulletTemplate.applyTo}</p>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Skill-Experience Alignment */}
+          {data.skillExperienceAlignment && data.skillExperienceAlignment.gaps.length > 0 && (
+            <div className="border border-blue-500/30 bg-blue-900/10 rounded-lg p-6">
+              <h4 className="text-blue-400 font-semibold mb-3 flex items-center gap-2">
+                <span>🔍</span>
+                <span>Skill-Experience Alignment</span>
+              </h4>
+
+              <p className="text-sm text-gray-400 mb-4">
+                Comparing your Skills section with Experience mentions:
+              </p>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-700">
+                      <th className="text-left py-2 px-3 text-gray-300">Skill</th>
+                      <th className="text-center py-2 px-3 text-gray-300">Listed?</th>
+                      <th className="text-center py-2 px-3 text-gray-300">Used</th>
+                      <th className="text-left py-2 px-3 text-gray-300">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.skillExperienceAlignment.gaps.map((gap, i) => (
+                      <tr key={i} className="border-b border-gray-800">
+                        <td className="py-3 px-3 text-gray-200 font-medium">{gap.skill}</td>
+                        <td className="text-center py-3 px-3">
+                          {gap.type === 'listed_not_used' ? (
+                            <span className="text-green-400">✓</span>
+                          ) : (
+                            <span className="text-red-400">✗</span>
+                          )}
+                        </td>
+                        <td className="text-center py-3 px-3 text-gray-300">
+                          {data.skillExperienceAlignment?.experienceMentions[gap.skill] || 0}×
+                        </td>
+                        <td className="py-3 px-3 text-yellow-300 text-xs">
+                          {gap.suggestion}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Career Narrative */}
+          {data.careerNarrative && (
+            <div className="border border-purple-500/30 bg-purple-900/10 rounded-lg p-6">
+              <h4 className="text-purple-400 font-semibold mb-3 flex items-center gap-2">
+                <span>📈</span>
+                <span>Your Career Progression Story</span>
+              </h4>
+
+              <div className="bg-gray-800/50 border border-gray-700 rounded p-4 mb-4">
+                <p className="text-gray-200 text-sm leading-relaxed">
+                  {data.careerNarrative.progression}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-sm text-gray-400">Summary Alignment:</span>
+                <span
+                  className={`px-3 py-1 rounded text-sm font-medium ${
+                    data.careerNarrative.summaryAlignment === 'good'
+                      ? 'bg-green-900/40 text-green-300 border border-green-500/30'
+                      : data.careerNarrative.summaryAlignment === 'partial'
+                      ? 'bg-yellow-900/40 text-yellow-300 border border-yellow-500/30'
+                      : 'bg-red-900/40 text-red-300 border border-red-500/30'
+                  }`}
+                >
+                  {data.careerNarrative.summaryAlignment === 'good' && '✓ Good'}
+                  {data.careerNarrative.summaryAlignment === 'partial' && '⚠ Partial'}
+                  {data.careerNarrative.summaryAlignment === 'poor' && '✗ Poor'}
+                </span>
+              </div>
+
+              {data.careerNarrative.suggestion && (
+                <div className="bg-purple-900/20 border border-purple-500/30 rounded p-4">
+                  <p className="text-sm text-gray-300">
+                    <span className="text-purple-400 font-medium">💡 Suggestion: </span>
+                    {data.careerNarrative.suggestion}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Section Cards */}
       <div className="space-y-6">
@@ -747,6 +919,48 @@ function CareerAnalysisView({ data }: { data: CareerTailoringResult }) {
         <h2 className="text-2xl font-bold text-white mb-2">Career Roadmap & Tailoring</h2>
         <p className="text-gray-400">Target roles, skill gaps, and career progression plan</p>
       </div>
+
+      {/* Career Narrative */}
+      {data.careerNarrative && (
+        <div className="border border-purple-500/30 bg-purple-900/10 rounded-lg p-6">
+          <h3 className="text-purple-400 font-semibold mb-3 flex items-center gap-2">
+            <span>📈</span>
+            <span>Your Career Progression Story</span>
+          </h3>
+
+          <div className="bg-gray-800/50 border border-gray-700 rounded p-4 mb-4">
+            <p className="text-gray-200 text-sm leading-relaxed">
+              {data.careerNarrative.progression}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-sm text-gray-400">Summary Alignment:</span>
+            <span
+              className={`px-3 py-1 rounded text-sm font-medium ${
+                data.careerNarrative.summaryAlignment === 'good'
+                  ? 'bg-green-900/40 text-green-300 border border-green-500/30'
+                  : data.careerNarrative.summaryAlignment === 'partial'
+                  ? 'bg-yellow-900/40 text-yellow-300 border border-yellow-500/30'
+                  : 'bg-red-900/40 text-red-300 border border-red-500/30'
+              }`}
+            >
+              {data.careerNarrative.summaryAlignment === 'good' && '✓ Good'}
+              {data.careerNarrative.summaryAlignment === 'partial' && '⚠ Partial'}
+              {data.careerNarrative.summaryAlignment === 'poor' && '✗ Poor'}
+            </span>
+          </div>
+
+          {data.careerNarrative.suggestion && (
+            <div className="bg-purple-900/20 border border-purple-500/30 rounded p-4">
+              <p className="text-sm text-gray-300">
+                <span className="text-purple-400 font-medium">💡 Suggestion: </span>
+                {data.careerNarrative.suggestion}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Tailoring Analysis */}
       <div className="border border-gray-700 rounded-lg p-6 bg-gradient-to-br from-blue-900/20 to-indigo-900/20">

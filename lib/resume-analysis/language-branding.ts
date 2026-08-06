@@ -130,9 +130,13 @@ Personal Branding Scores (0-100):
 - visual_branding: Formatting impact (headers, layout, whitespace)
   Professional = 80-100, Adequate = 60-80, Poor = 40-60
 
-Industry Benchmarks:
-- Reference typical scores for job target when available
-- Example: "Average brand clarity for Software Engineers is 65"`;
+CRITICAL: Base all analysis ONLY on resume content. Never reference:
+- Industry averages, benchmarks, or "typical" scores
+- Salary figures or compensation ranges
+- Job market trends or growth percentages
+- External data not present in the resume
+
+Instead, provide observable patterns from THEIR resume (e.g., "Your scope grew from $200K to $2M budget" not "typical for your level").`;
 
   // User message: Analysis request
   const prompt = `Analyze language and branding for job target: "${inferredJobTarget}"
@@ -173,7 +177,6 @@ INSTRUCTIONS:
 - Provide 3-5 verb examples with 10-word context snippets
 - Assess tone appropriateness for ${inferredJobTarget}
 - Score all branding metrics (0-100) with clear reasons
-- Include industry benchmarks where applicable
 - Max 4 suggestions per section, specific and actionable
 
 Resume:

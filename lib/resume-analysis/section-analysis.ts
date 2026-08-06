@@ -60,6 +60,27 @@ export interface SectionAnalysisResult {
     suggestions: string[];
     examples: string[];
   };
+  // Maximum Value Suggestions (new)
+  bestBulletTemplate?: {
+    bullet: string;
+    why: string;
+    structure: string;
+    applyTo: string[];
+  };
+  skillExperienceAlignment?: {
+    skillsListed: string[];
+    experienceMentions: Record<string, number>;
+    gaps: Array<{
+      type: 'listed_not_used' | 'used_not_listed';
+      skill: string;
+      suggestion: string;
+    }>;
+  };
+  careerNarrative?: {
+    progression: string;
+    summaryAlignment: string;
+    suggestion?: string;
+  };
 }
 
 export async function runSectionAnalysis(
@@ -163,6 +184,26 @@ Return ONLY this JSON:
     "feedback": "1-2 sentences on metrics usage",
     "suggestions": ["specific suggestion (max 3)"],
     "examples": ["before: [vague] → after: [quantified] (max 3)"]
+  },
+  "bestBulletTemplate": {
+    "bullet": "exact text of their strongest bullet (most complete: verb + scope + metric + timeline)",
+    "why": "This works because it has: ✓ Action verb (X) ✓ Scope (Y) ✓ Achievement (Z) ✓ Metric (%) ✓ Context (numbers) ✓ Timeline (months)",
+    "structure": "[Verb] [scope] to [achievement], [metric] ([context]) in [timeline]",
+    "applyTo": ["bullet reference 1 that needs this structure", "bullet reference 2"]
+  },
+  "skillExperienceAlignment": {
+    "skillsListed": ["skill1", "skill2", "skill3"],
+    "experienceMentions": {"skill1": 3, "skill2": 1, "skill3": 0, "unlisted_skill": 4},
+    "gaps": [{
+      "type": "listed_not_used | used_not_listed",
+      "skill": "skill name",
+      "suggestion": "add example or remove | add to Skills section"
+    }]
+  },
+  "careerNarrative": {
+    "progression": "Your resume shows: Scope (solo → 12-person teams), Budget ($0 → $2M), Impact (local → company-wide), Stakeholders (team → C-suite)",
+    "summaryAlignment": "good | partial | poor",
+    "suggestion": "Consider rewriting Summary to mirror progression (e.g., 'Scaling from IC to leadership...')"
   }
 }
 
@@ -173,6 +214,11 @@ INSTRUCTIONS:
 - Keep feedback concise (1-2 sentences)
 - Populate skill_categories based on actual content
 - Examples should be ≤15 words each side of arrow
+
+MAXIMUM VALUE SUGGESTIONS (new):
+1. Find their BEST bullet (most complete with verb, scope, metric, timeline, context)
+2. Compare Skills section list vs Experience mentions - count occurrences
+3. Identify progression pattern (scope, budget, impact, stakeholders) and compare to Summary
 
 Resume:
 ${resumeContent}`;

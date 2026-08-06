@@ -166,6 +166,8 @@ Cultural Fit (all 0-100):
 - Organization type scores: Based on company size/stage experience
   Startup (>80) = startup experience, Enterprise (>80) = large company experience
 - culturalAdaptability: Diverse experience, international work, varied industries
+- NEVER say "You are a great fit for startups" or "Best suited for enterprise"
+- INSTEAD say: "Your resume shows 5 cross-functional collaborations and 0 direct-reports, which may align with environments that value broad influence over head-count management"
 
 Learning Profile (all 0-100):
 - skillAcquisitionSpeed: New skills per year
@@ -179,9 +181,14 @@ Network Analysis (all 0-100):
 - industryConnectivity: Industry involvement, conferences, publications
 - networkDiversity: Varied industries, roles, geographies
 
-Industry Benchmarks:
-- Reference typical scores for job target when available
-- Example: "Average PM team_orientation is 75"`;
+CRITICAL: Base all analysis ONLY on resume content. Never reference:
+- Industry averages, benchmarks, or "typical" scores
+- Salary figures or compensation ranges
+- Job market trends or growth percentages
+- Personality claims ("you prefer", "you're a great fit for")
+- External data not present in the resume
+
+Instead, provide observable patterns from THEIR resume (e.g., "5 instances of cross-functional collaboration" not "you prefer collaborative environments").`;
 
   // User message: Analysis request
   const prompt = `Analyze psychological profile and deep insights for job target: "${inferredJobTarget}"
@@ -247,7 +254,8 @@ Return ONLY this JSON:
       "government": 0-100
     },
     "leadershipStylePreference": "Directive|Supportive|Coaching|Delegative",
-    "culturalAdaptability": {"score": 0-100, "reason": "1-2 sentences"}
+    "culturalAdaptability": {"score": 0-100, "reason": "Observable pattern from resume (e.g., '5 cross-functional collaborations, 0 direct-reports suggests broad influence over head-count management'), NOT 'great fit for startups'"}
+  },
   },
   "learningAndDevelopmentProfile": {
     "formalEducationPattern": "Traditional|Non-traditional|Continuous|Specialized",
@@ -271,13 +279,14 @@ Return ONLY this JSON:
 }
 
 INSTRUCTIONS:
-- Infer psychological traits from resume evidence (leadership roles = risk_tolerance)
-- All scores 0-100 with industry benchmarks where applicable
+- Infer psychological traits from resume evidence only (e.g., leadership roles = risk_tolerance)
 - Evidence quotes: 10-15 words from resume
 - Align insights with ${inferredJobTarget}
 - Use skills data to assess industry alignment
-- Identify knowledge gaps and suggest resources
-- Provide actionable network growth strategies
+- Identify knowledge gaps based on role progression patterns in resume
+- Provide actionable network growth strategies based on their documented experience
+- For cultural fit: cite observable data (e.g., "5 cross-functional collaborations, 0 direct-reports")
+- Organization type scores reflect EXPERIENCE at those types, not predictions of fit
 
 Resume:
 ${resumeContent}`;

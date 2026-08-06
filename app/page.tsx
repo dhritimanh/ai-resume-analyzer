@@ -8,6 +8,7 @@ import FileUpload from '@/components/FileUpload';
 import ResumePreview from '@/components/ResumePreview';
 import QuickAnalysis from '@/components/QuickAnalysis';
 import FullAnalysisDashboard from '@/components/FullAnalysisDashboard';
+import FullAnalysisDashboardV2 from '@/components/FullAnalysisDashboardV2';
 import ProcessingAnimation from '@/components/ProcessingAnimation';
 import TeaserDashboard from '@/components/TeaserDashboard';
 
@@ -598,7 +599,7 @@ ${typeof section.content === 'string' ? section.content :
 
         {showFullAnalysis && hasPaid && (
           <div className="relative">
-            <FullAnalysisDashboard
+            <FullAnalysisDashboardV2
               resumeContent={resumeContent}
               resumeData={resumeData}
               onBack={() => {
